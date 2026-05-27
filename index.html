@@ -3,53 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Digital Sahayata Network</title>
-    <!-- Google Fonts -->
+    <title>Digital Sahayata | Live Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase Real System SDKs (Yeh App ka Dimaag Hai) -->
+    <!-- Firebase Server Connection (App ka Asli Dimaag) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background-color: #0f172a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        body { background-color: #0f172a; color: white; padding: 20px; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
         
-        .startup-container { text-align: center; padding: 30px; }
-        .logo-box { width: 100px; height: 100px; background: #3b82f6; border-radius: 25px; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 20px; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.5); }
+        .startup-vault { background: #1e293b; padding: 30px; border-radius: 20px; border: 2px solid #334155; width: 100%; max-width: 400px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
         
-        h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 10px; letter-spacing: 1px; }
-        h1 span { color: #3b82f6; }
-        p { color: #94a3b8; font-size: 1.1rem; margin-bottom: 40px; }
+        h2 { color: #3b82f6; margin-bottom: 5px; text-align: center; font-weight: 800; font-size: 2rem; }
+        p.subtitle { text-align: center; color: #94a3b8; margin-bottom: 25px; font-size: 0.9rem; font-weight: 600; }
         
-        .status-box { background: #1e293b; border: 2px solid #334155; padding: 20px; border-radius: 15px; width: 100%; max-width: 350px; margin: 0 auto; }
-        .pulse { display: inline-block; width: 12px; height: 12px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; animation: pulse-anim 1.5s infinite; margin-right: 10px; }
-        
-        @keyframes pulse-anim { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
+        .pulse-badge { background: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+        .pulse-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
 
-        .btn-connect { background: #3b82f6; color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: 600; border-radius: 12px; margin-top: 30px; width: 100%; max-width: 350px; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+        input, select, button { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 10px; border: none; font-size: 1rem; font-weight: 600; }
+        input, select { background: #0f172a; color: white; border: 2px solid #475569; outline: none; }
+        input:focus, select:focus { border-color: #3b82f6; }
         
-        .footer { position: fixed; bottom: 20px; color: #475569; font-size: 0.85rem; font-weight: 600; }
+        button { background: #3b82f6; color: white; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+        button:active { transform: scale(0.97); }
+        
+        #statusMsg { text-align: center; font-weight: 700; margin-top: 15px; font-size: 0.95rem; }
     </style>
 </head>
 <body>
 
-    <div class="startup-container">
-        <div class="logo-box"><i class="fas fa-bolt"></i></div>
-        <h1>Digital<span>Sahayata</span></h1>
-        <p>India's Smartest Service Network</p>
-
-        <div class="status-box">
-            <h3 style="font-size: 1.1rem; color: #f8fafc;"><span class="pulse"></span> System Online</h3>
-            <p style="margin: 10px 0 0; font-size: 0.9rem; color: #64748b;">Firebase Engine: Standby<br>Katra, Mandla HQ Connected</p>
+    <div class="startup-vault">
+        <div style="text-align: center;">
+            <div class="pulse-badge"><div class="pulse-dot"></div> Database Connected</div>
         </div>
+        <h2>Digital<span>Sahayata</span></h2>
+        <p class="subtitle">System Live! Send First Data 🚀</p>
 
-        <button class="btn-connect" onclick="alert('System Ready: Next update mein hum is button ko seedha Firebase Database se connect karenge!')">Initialize System</button>
+        <input type="text" id="custName" placeholder="Aapka Naam" required>
+        <input type="tel" id="custPhone" placeholder="WhatsApp Number" required>
+        
+        <select id="serviceType">
+            <option value="Aadhaar/PAN Update">Aadhaar/PAN Update</option>
+            <option value="Startup/MSME Reg">Startup/MSME Registration</option>
+            <option value="Creative Design Task">Creative Design Task</option>
+            <option value="Express Delivery">Express Delivery</option>
+        </select>
+        
+        <button onclick="launchToDatabase()">Submit & Test System</button>
+        <div id="statusMsg"></div>
     </div>
 
-    <div class="footer">Founder: Utkrasth Jhariya | V 1.0.0</div>
+    <script>
+        // 1. Aapki Secret Firebase Config (Screenshot se extract ki hui)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmdEmqUiIP0hr_Ixfu6s83KBJfeTHgFkw",
+            authDomain: "digital-sahayata-f3ede.firebaseapp.com",
+            projectId: "digital-sahayata-f3ede",
+            storageBucket: "digital-sahayata-f3ede.firebasestorage.app",
+            messagingSenderId: "532380574288",
+            appId: "1:532380574288:web:f306370320e448f09b6755",
+            measurementId: "G-DQDZ3WFKP5"
+        };
 
+        // 2. Engine Start (Initialize Firebase)
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // 3. Database mein Data Bhejne ka Engine
+        function launchToDatabase() {
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const service = document.getElementById('serviceType').value;
+            const statusDiv = document.getElementById('statusMsg');
+
+            if(!name || !phone) {
+                statusDiv.innerHTML = "<span style='color:#ef4444;'>⚠️ Kripya poora form bharein!</span>";
+                return;
+            }
+
+            statusDiv.innerHTML = "<span style='color:#eab308;'>⏳ Processing... Secure Server connection establishing...</span>";
+
+            // Asli magic: Data "Orders" collection mein jaa raha hai
+            db.collection("Orders").add({
+                customerName: name,
+                customerPhone: phone,
+                serviceName: service,
+                status: "Pending Assignment",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then((docRef) => {
+                // Success hone par action
+                statusDiv.innerHTML = "<span style='color:#22c55e;'>🎉 BOOM! Order Saved in Database! <br> ID: " + docRef.id + "</span>";
+                document.getElementById('custName').value = '';
+                document.getElementById('custPhone').value = '';
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+                statusDiv.innerHTML = "<span style='color:#ef4444;'>❌ Server Error: Database Check Karein</span>";
+            });
+        }
+    </script>
 </body>
 </html>
-
