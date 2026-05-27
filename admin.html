@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin HQ | Digital Sahayata</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background-color: #0f172a; color: white; padding: 20px; }
+        
+        .header { text-align: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid #1e293b; }
+        h1 { color: #f43f5e; font-weight: 800; font-size: 2rem; margin-bottom: 5px; }
+        p.subtitle { color: #94a3b8; font-size: 0.9rem; font-weight: 600; }
+        
+        .order-card { background: #1e293b; padding: 20px; border-radius: 15px; border: 2px solid #334155; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .order-card h3 { color: #38bdf8; margin-bottom: 5px; font-size: 1.3rem; }
+        .order-info { color: #cbd5e1; font-size: 0.95rem; margin-bottom: 10px; line-height: 1.5; }
+        
+        .badge { background: #fef08a; color: #854d0e; padding: 4px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: 800; display: inline-block; margin-bottom: 15px; }
+        .badge.completed { background: #dcfce7; color: #166534; }
+        
+        button { background: #10b981; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+        button:active { transform: scale(0.98); }
+        
+        #loading { text-align: center; color: #94a3b8; margin-top: 50px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Founder HQ 🛡️</h1>
+        <p class="subtitle">Live Command Center - Mandla Hub</p>
+    </div>
+
+    <div id="loading">📡 Live Orders scan kar raha hai...</div>
+    <div id="ordersContainer"></div>
+
+    <script>
+        // Aapki Secret Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmdEmqUiIP0hr_Ixfu6s83KBJfeTHgFkw",
+            authDomain: "digital-sahayata-f3ede.firebaseapp.com",
+            projectId: "digital-sahayata-f3ede",
+            storageBucket: "digital-sahayata-f3ede.firebasestorage.app",
+            messagingSenderId: "532380574288",
+            appId: "1:532380574288:web:f306370320e448f09b6755",
+            measurementId: "G-DQDZ3WFKP5"
+        };
+
+        // Engine Start
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Data laane ka function
+        const ordersContainer = document.getElementById('ordersContainer');
+        const loading = document.getElementById('loading');
+
+        // Realtime listener laga rahe hain
+        db.collection("Orders").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+            loading.style.display = 'none';
+            ordersContainer.innerHTML = ''; // Pehle ka clear karein
+            
+            if (snapshot.empty) {
+                ordersContainer.innerHTML = '<p style="text-align:center; color:#94a3b8;">Abhi koi naya order nahi hai.</p>';
+                return;
+            }
+
+            snapshot.forEach((doc) => {
+                const order = doc.data();
+                const orderId = doc.id;
+                
+                let badgeClass = 'badge';
+                let btnHtml = `<button onclick="acceptOrder('${orderId}')">Accept & Process ✅</button>`;
+                
+                if (order.status === "Processing") {
+                    badgeClass = 'badge completed';
+                    btnHtml = `<button style="background:#475569;" disabled>Order Accepted 🚀</button>`;
+                }
+
+                const cardHtml = `
+                    <div class="order-card">
+                        <span class="${badgeClass}">${order.status}</span>
+                        <h3>${order.customerName}</h3>
+                        <div class="order-info">
+                            <strong>📞 Phone:</strong> ${order.customerPhone}<br>
+                            <strong>💼 Service:</strong> ${order.serviceName}
+                        </div>
+                        ${btnHtml}
+                    </div>
+                `;
+                ordersContainer.innerHTML += cardHtml;
+            });
+        });
+
+        // Order Accept karne ka logic
+        function acceptOrder(id) {
+            db.collection("Orders").doc(id).update({
+                status: "Processing"
+            }).then(() => {
+                alert("Order Accepted successfully!");
+            }).catch((error) => {
+                alert("Error updating order: " + error);
+            });
+        }
+    </script>
+</body>
+</html>
