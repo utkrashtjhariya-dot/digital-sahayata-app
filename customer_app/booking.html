@@ -143,6 +143,64 @@
 
         </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script>
+        // AAPKI ASLI FIREBASE CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmdEmqUIiP0hr_Ixfu6s83KBJfeTHgFkw",
+            authDomain: "digital-sahayata-f3ede.firebaseapp.com",
+            projectId: "digital-sahayata-f3ede",
+            storageBucket: "digital-sahayata-f3ede.firebasestorage.app",
+            messagingSenderId: "532380574288",
+            appId: "1:532380574288:web:f306370320e448f09b6755"
+        };
 
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // Intercept form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Stop normal fake redirect
+            
+            const submitBtn = document.querySelector('.btn-submit');
+            submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Creating Secure Order...';
+            submitBtn.disabled = true;
+
+            // Fetch data from form
+            const serviceType = document.querySelector('select').value;
+            const applicantName = document.querySelectorAll('input')[0].value;
+            const contactNumber = document.querySelectorAll('input')[1].value;
+
+            // Create Order ID
+            const orderId = "DSN" + Math.floor(100000 + Math.random() * 900000);
+
+            // SAVE TO FIREBASE FIRESTORE
+            db.collection("3_ORDERS").doc(orderId).set({
+                order_id: orderId,
+                customer_name: applicantName,
+                contact_phone: contactNumber,
+                service_requested: serviceType,
+                payment_status: "PENDING_PAYMENT",
+                order_status: "NEW_REQUEST",
+                total_amount_inr: 150,
+                created_at: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                alert("Order " + orderId + " Created Successfully in Database!");
+                window.location.href = '../index.html'; // Redirect to home
+            })
+            .catch((error) => {
+                console.error("Error writing document: ", error);
+                alert("System Error: Could not save order. Please try again.");
+                submitBtn.innerHTML = 'Proceed to Pay ₹150';
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+    
 </body>
 </html>
