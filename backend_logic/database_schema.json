@@ -1,0 +1,107 @@
+{
+  "DigitalSahayata_Production_DB": {
+    
+    "1_CUSTOMERS_COLLECTION": {
+      "user_id_1001": {
+        "profile": {
+          "full_name": "Suresh Kumar",
+          "phone_number": "+919876543210",
+          "is_phone_verified": true,
+          "joined_date": "2026-05-28T10:00:00Z",
+          "app_version": "1.0.0"
+        },
+        "location": {
+          "address": "Katra, Mandla",
+          "lat": 22.5973,
+          "lng": 80.3804,
+          "pincode": "481661"
+        },
+        "wallet": {
+          "balance_inr": 500,
+          "last_recharge": "2026-05-27"
+        },
+        "security": {
+          "device_fcm_token": "token_abc123_for_push_notifications",
+          "account_status": "ACTIVE"
+        }
+      }
+    },
+
+    "2_PARTNERS_COLLECTION": {
+      "partner_id_PRT1002": {
+        "business_info": {
+          "shop_name": "MP Online Center",
+          "owner_name": "Amit Patel",
+          "phone_number": "+918765432109",
+          "is_kyc_verified": true,
+          "rating": 4.8,
+          "total_completed_jobs": 284
+        },
+        "services_offered": [
+          "PAN_CARD", "AADHAAR_UPDATE", "INCOME_TAX"
+        ],
+        "geo_routing": {
+          "shop_address": "Main Market, Bamhani Banjar",
+          "service_radius_km": 10,
+          "live_lat": 22.5800,
+          "live_lng": 80.3700
+        },
+        "financials": {
+          "wallet_balance_inr": 2450,
+          "bank_account_linked": true,
+          "upi_id": "amit.patel@okicici",
+          "platform_commission_rate": 0.10
+        },
+        "live_status": {
+          "is_online": true,
+          "current_active_orders": 2
+        }
+      }
+    },
+
+    "3_ORDERS_COLLECTION": {
+      "order_id_DSN847291": {
+        "metadata": {
+          "service_type": "PAN_CARD_APPLY",
+          "created_at": "2026-05-28T14:30:00Z",
+          "status": "PROCESSING", 
+          "priority": "HIGH"
+        },
+        "parties": {
+          "customer_id": "user_id_1001",
+          "assigned_partner_id": "partner_id_PRT1002"
+        },
+        "payment": {
+          "customer_paid_inr": 150,
+          "payment_method": "UPI",
+          "transaction_id": "TXN_UPI_998877",
+          "payment_status": "CAPTURED"
+        },
+        "commission_split": {
+          "platform_fee_inr": 15,
+          "partner_earning_inr": 135,
+          "payout_status": "PENDING_SETTLEMENT"
+        },
+        "documents": {
+          "customer_uploaded_docs": ["url_to_photo.jpg", "url_to_aadhaar.pdf"],
+          "partner_final_receipt": "url_to_pan_receipt.pdf"
+        },
+        "timeline": [
+          {"event": "ORDER_PLACED", "time": "2026-05-28T14:30:00Z"},
+          {"event": "PARTNER_ASSIGNED", "time": "2026-05-28T14:32:00Z"},
+          {"event": "PROCESSING_STARTED", "time": "2026-05-28T14:40:00Z"}
+        ]
+      }
+    },
+
+    "4_ADMIN_SYSTEM_CONFIG": {
+      "global_settings": {
+        "platform_is_live": true,
+        "base_commission_percentage": 10,
+        "auto_assign_algorithm": "NEAREST_AND_HIGHEST_RATED",
+        "support_contact": "support@digitalsahayata.in"
+      }
+    }
+
+  }
+}
