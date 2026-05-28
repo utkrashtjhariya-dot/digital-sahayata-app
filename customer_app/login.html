@@ -104,6 +104,8 @@
     </div>
 
     <script>
+            <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script>
         // AAPKI ASLI FIREBASE CONFIGURATION
         const firebaseConfig = {
             apiKey: "AIzaSyBmdEmqUIiP0hr_Ixfu6s83KBJfeTHgFkw",
@@ -115,11 +117,12 @@
             measurementId: "G-DQDZ3WFKP5"
         };
 
-        // Initialize Firebase
+        // Initialize Firebase Auth & Database
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const auth = firebase.auth();
+        const db = firebase.firestore(); // 100x Startup Database Engine Started
         auth.useDeviceLanguage(); 
 
         let confirmationResultObj = null;
@@ -156,11 +159,9 @@
 
             const appVerifier = window.recaptchaVerifier;
 
-            // REAL SMS TRIGGER
             auth.signInWithPhoneNumber(fullNumber, appVerifier)
                 .then((confirmationResult) => {
                     window.confirmationResultObj = confirmationResult;
-                    
                     document.getElementById('phone-section').style.display = 'none';
                     document.getElementById('otp-section').style.display = 'block';
                     showMsg("OTP Sent successfully to " + fullNumber, "success");
@@ -174,7 +175,7 @@
                 });
         }
 
-        // ENGINE: Verify OTP Function
+        // ENGINE: Verify OTP & Save to Database
         function verifyOTP() {
             const otpVal = document.getElementById('otpCode').value;
             if(otpVal.length !== 6) {
@@ -183,18 +184,32 @@
             }
 
             const btn = document.getElementById('verifyOtpBtn');
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Verifying...';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving to Database...';
             btn.disabled = true;
 
             window.confirmationResultObj.confirm(otpVal)
                 .then((result) => {
                     const user = result.user;
-                    console.log("Authentication Successful. UID:", user.uid);
-                    showMsg("Login Successful! Redirecting...", "success");
                     
-                    setTimeout(() => {
-                        window.location.href = "home_screen.html";
-                    }, 1500);
+                    // PHASE 2: FIREBASE FIRESTORE INTEGRATION (Backend Schema saving)
+                    db.collection("1_CUSTOMERS").doc(user.uid).set({
+                        phone_number: user.phoneNumber,
+                        is_phone_verified: true,
+                        account_status: "ACTIVE",
+                        last_login: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true }) // Merge true ensures old data isn't deleted if they login again
+                    .then(() => {
+                        showMsg("Login & Database Sync Successful! Redirecting...", "success");
+                        
+                        setTimeout(() => {
+                            // REDIRECT TO THE NEW PREMIUM WEB PORTAL
+                            window.location.href = "../index.html"; 
+                        }, 1500);
+                    })
+                    .catch((error) => {
+                        console.error("Database Error:", error);
+                        showMsg("Database Sync Failed. Try again.", "error");
+                    });
                 })
                 .catch((error) => {
                     console.error("OTP Verification Error:", error);
@@ -204,5 +219,6 @@
                 });
         }
     </script>
+    
 </body>
 </html>
