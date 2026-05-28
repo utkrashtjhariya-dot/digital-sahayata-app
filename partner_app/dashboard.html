@@ -3,178 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Partner Dashboard | Digital Sahayata</title>
+    <title>Partner Portal | Digital Sahayata</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Firebase Engine -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
     <style>
         :root {
-            --bg: #f3f4f6; --surface: #ffffff; --text: #1f2937; --mute: #6b7280;
-            --brand-green: #166534; /* Partner App Dark Green Theme */
-            --brand-light: #dcfce7; --success: #22c55e; --danger: #ef4444;
+            --bg: #f4f7f6; 
+            --surface: #ffffff; 
+            --text-dark: #1f2937; 
+            --text-mute: #6b7280;
+            --brand-dark: #064e3b; /* Dark Green Sidebar */
+            --brand-primary: #10b981; /* Emerald Green */
+            --brand-light: #ecfdf5;
             --border: #e5e7eb;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text); display: flex; min-height: 100vh; flex-direction: column; }
+        body { background: var(--bg); color: var(--text-dark); display: flex; min-height: 100vh; overflow-x: hidden; }
 
-        /* Desktop/Tablet Sidebar & Mobile Header */
+        /* Premium Sidebar */
         .sidebar {
-            background: var(--brand-green); color: white; width: 250px;
-            display: none; flex-direction: column; padding: 20px 0;
-            position: fixed; height: 100vh; left: 0; top: 0;
+            background: var(--brand-dark); color: white; width: 260px;
+            display: flex; flex-direction: column; position: fixed;
+            height: 100vh; left: 0; top: 0; z-index: 100;
         }
-        .mobile-header {
-            background: var(--brand-green); color: white; padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 100;
+        .sidebar-brand {
+            padding: 25px 20px; font-size: 1.2rem; font-weight: 800;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;
         }
-        .brand { font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .sidebar-brand i { color: var(--brand-primary); }
         
-        .main-content { padding: 20px; flex: 1; padding-bottom: 80px; }
-        @media (min-width: 768px) {
-            .sidebar { display: flex; }
-            .mobile-header { display: none; }
-            .main-content { margin-left: 250px; padding: 30px; }
+        .nav-links { padding: 20px 0; flex: 1; }
+        .nav-item {
+            padding: 15px 25px; color: #a7f3d0; text-decoration: none;
+            display: flex; align-items: center; gap: 15px; font-weight: 500; transition: 0.2s;
         }
-
-        /* Top Bar Info */
-        .top-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .top-info h2 { font-size: 1.3rem; font-weight: 800; }
-        .status-toggle { background: var(--brand-light); color: var(--brand-green); padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; }
-
-        /* Stat Cards */
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--surface); padding: 15px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .stat-card h4 { font-size: 0.75rem; color: var(--mute); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
-        .stat-card h3 { font-size: 1.5rem; font-weight: 800; color: var(--text); }
-        .stat-card.highlight { background: var(--brand-light); border-color: #bbf7d0; }
-        .stat-card.highlight h3 { color: var(--brand-green); }
-
-        /* Order Requests List */
-        .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 15px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.05); color: white;
+            border-left: 4px solid var(--brand-primary);
+        }
+        .nav-item i { font-size: 1.2rem; width: 20px; }
         
-        .order-item {
-            background: var(--surface); padding: 15px; border-radius: 12px;
-            border: 1px solid var(--border); margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        .partner-profile {
+            padding: 20px; border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.2);
         }
-        .order-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .service-name { font-weight: 700; font-size: 1rem; color: var(--text); }
-        .order-price { font-weight: 800; color: var(--brand-green); }
+        .p-avatar { width: 40px; height: 40px; border-radius: 8px; background: var(--brand-primary); display: flex; justify-content: center; align-items: center; font-weight: 700; }
+
+        /* Main Dashboard Content */
+        .main-content { flex: 1; margin-left: 260px; padding: 30px; display: flex; flex-direction: column; }
         
-        .order-details { font-size: 0.85rem; color: var(--mute); margin-bottom: 15px; display: grid; gap: 5px; }
-        .order-details span { display: flex; align-items: center; gap: 6px; }
-
-        .action-buttons { display: flex; gap: 10px; }
-        .btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-accept { background: var(--success); color: white; }
-        .btn-reject { background: #fee2e2; color: var(--danger); }
-        .btn:active { transform: scale(0.95); }
-
-        /* Mobile Bottom Nav */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: var(--surface); border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around; padding: 12px 0;
-            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .top-header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
+        .status-toggle {
+            background: var(--brand-light); color: var(--brand-primary);
+            padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 8px; border: 1px solid #a7f3d0; cursor: pointer;
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--mute); font-size: 1.2rem; }
-        .nav-item.active { color: var(--brand-green); }
-        .nav-item span { font-size: 0.7rem; font-weight: 600; }
-        @media (min-width: 768px) { .bottom-nav { display: none; } }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .stat-card {
+            background: var(--surface); padding: 20px; border-radius: 16px;
+            border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            transition: 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); border-color: var(--brand-primary); }
+        .stat-card h4 { font-size: 0.8rem; color: var(--text-mute); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.5px; }
+        .stat-card h2 { font-size: 2rem; font-weight: 800; color: var(--text-dark); }
+        .stat-card.highlight { background: var(--brand-primary); border-color: var(--brand-primary); color: white; }
+        .stat-card.highlight h4 { color: rgba(255,255,255,0.8); }
+        .stat-card.highlight h2 { color: white; }
+
+        /* Active Orders Section */
+        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .panel { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .panel-header h3 { font-size: 1.2rem; font-weight: 800; }
+        
+        .order-list { display: flex; flex-direction: column; gap: 15px; }
+        .order-item { border: 1px solid var(--border); border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .order-item:hover { border-color: var(--brand-primary); background: #f8fafc; }
+        
+        .order-info h4 { font-size: 1rem; font-weight: 700; margin-bottom: 5px; color: var(--text-dark); }
+        .order-info p { font-size: 0.8rem; color: var(--text-mute); }
+        .order-meta { text-align: right; }
+        .order-price { font-size: 1.1rem; font-weight: 800; color: var(--brand-primary); margin-bottom: 5px; }
+        .btn-sm { background: var(--brand-dark); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 1024px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; padding: 15px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .content-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="mobile-header">
-        <div class="brand"><i class="fas fa-store"></i> Partner App</div>
-        <i class="fas fa-bell"></i>
+    <div class="sidebar">
+        <div class="sidebar-brand"><i class="fas fa-fingerprint"></i> Partner Portal</div>
+        <div class="nav-links">
+            <a href="#" class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="#" class="nav-item"><i class="fas fa-list-alt"></i> New Requests</a>
+            <a href="#" class="nav-item"><i class="fas fa-check-circle"></i> Completed</a>
+            <a href="#" class="nav-item"><i class="fas fa-wallet"></i> Earnings</a>
+            <a href="#" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+        </div>
+        <div class="partner-profile">
+            <div class="p-avatar"><i class="fas fa-store"></i></div>
+            <div>
+                <div style="font-weight: 700; font-size: 0.9rem;">MP Online Center</div>
+                <div style="font-size: 0.75rem; color: #a7f3d0;">PRT-1002</div>
+            </div>
+        </div>
     </div>
 
     <div class="main-content">
-        <div class="top-info">
-            <h2>Dashboard</h2>
-            <div class="status-toggle"><i class="fas fa-circle"></i> Online</div>
+        <div class="top-header">
+            <h1>Workspace</h1>
+            <div class="status-toggle"><i class="fas fa-circle"></i> Accepting Orders</div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
-                <h4>Today's Orders</h4>
-                <h3>12</h3>
+                <h4>Today's Jobs</h4>
+                <h2>12</h2>
             </div>
             <div class="stat-card">
                 <h4>Pending</h4>
-                <h3 style="color: #f59e0b;">3</h3>
+                <h2 style="color: #f59e0b;">3</h2>
             </div>
             <div class="stat-card">
                 <h4>Completed</h4>
-                <h3>28</h3>
+                <h2>284</h2>
             </div>
             <div class="stat-card highlight">
-                <h4>Earnings</h4>
-                <h3>₹2,450</h3>
+                <h4>Total Earnings</h4>
+                <h2>₹2,450</h2>
             </div>
         </div>
 
-        <div class="section-title">New Order Requests</div>
+        <div class="content-grid">
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Current Orders</h3>
+                    <a href="#" style="color: var(--brand-primary); font-weight: 600; text-decoration: none; font-size: 0.9rem;">View All</a>
+                </div>
+                
+                <div class="order-list">
+                    <div class="order-item">
+                        <div class="order-info">
+                            <h4>PAN Card Apply</h4>
+                            <p>Order ID: #DSN847291 • Katra, Mandla</p>
+                        </div>
+                        <div class="order-meta">
+                            <div class="order-price">₹150</div>
+                            <button class="btn-sm">Process Job</button>
+                        </div>
+                    </div>
 
-        <!-- Sample Incoming Order 1 -->
-        <div class="order-item" id="order1">
-            <div class="order-header">
-                <div class="service-name">PAN Card Apply</div>
-                <div class="order-price">₹150</div>
+                    <div class="order-item">
+                        <div class="order-info">
+                            <h4>Aadhaar Update</h4>
+                            <p>Order ID: #DSN847292 • Bamhani Banjar</p>
+                        </div>
+                        <div class="order-meta">
+                            <div class="order-price">₹100</div>
+                            <button class="btn-sm" style="background: #f59e0b;">Working...</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="order-details">
-                <span><i class="fas fa-hashtag"></i> Order ID: #DSN123457</span>
-                <span><i class="fas fa-map-marker-alt"></i> Katra, Mandla (1.2 km away)</span>
-                <span><i class="fas fa-clock"></i> Received 2 mins ago</span>
-            </div>
-            <div class="action-buttons">
-                <button class="btn btn-reject" onclick="processOrder('order1', 'rejected')">Reject</button>
-                <button class="btn btn-accept" onclick="processOrder('order1', 'accepted')">Accept Order</button>
-            </div>
-        </div>
 
-        <!-- Sample Incoming Order 2 -->
-        <div class="order-item" id="order2">
-            <div class="order-header">
-                <div class="service-name">Aadhaar Update</div>
-                <div class="order-price">₹100</div>
-            </div>
-            <div class="order-details">
-                <span><i class="fas fa-hashtag"></i> Order ID: #DSN123458</span>
-                <span><i class="fas fa-map-marker-alt"></i> Bamhani Banjar (3.5 km away)</span>
-                <span><i class="fas fa-clock"></i> Received 15 mins ago</span>
-            </div>
-            <div class="action-buttons">
-                <button class="btn btn-reject" onclick="processOrder('order2', 'rejected')">Reject</button>
-                <button class="btn btn-accept" onclick="processOrder('order2', 'accepted')">Accept Order</button>
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>System Notices</h3>
+                </div>
+                <div style="padding: 15px; background: var(--brand-light); border-left: 4px solid var(--brand-primary); border-radius: 8px; margin-bottom: 15px;">
+                    <h4 style="font-size: 0.9rem; color: var(--brand-dark); margin-bottom: 5px;">Payout Processed</h4>
+                    <p style="font-size: 0.8rem; color: var(--brand-dark);">Your previous week's settlement of ₹1,850 has been credited to your HDFC bank.</p>
+                </div>
+                <div style="padding: 15px; background: #eff6ff; border-left: 4px solid #2563eb; border-radius: 8px;">
+                    <h4 style="font-size: 0.9rem; color: #1e3a8a; margin-bottom: 5px;">New Service Added</h4>
+                    <p style="font-size: 0.8rem; color: #1e3a8a;">You can now accept 'Startup Registration' jobs. Update your profile to opt-in.</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active"><i class="fas fa-chart-pie"></i><span>Stats</span></div>
-        <div class="nav-item"><i class="fas fa-list-alt"></i><span>Orders</span></div>
-        <div class="nav-item"><i class="fas fa-wallet"></i><span>Earnings</span></div>
-        <div class="nav-item"><i class="fas fa-user-cog"></i><span>Profile</span></div>
-    </div>
-
-    <script>
-        function processOrder(orderId, action) {
-            const orderElement = document.getElementById(orderId);
-            if(action === 'accepted') {
-                orderElement.innerHTML = `<div style="text-align:center; padding: 20px; color: var(--success); font-weight:700;"><i class="fas fa-check-circle" style="font-size:2rem; margin-bottom:10px;"></i><br>Order Accepted! Client Notified.</div>`;
-            } else {
-                orderElement.style.display = 'none';
-            }
-        }
-    </script>
 </body>
 </html>
