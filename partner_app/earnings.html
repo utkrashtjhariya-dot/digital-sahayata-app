@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Earnings | Partner App</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #f3f4f6; --surface: #ffffff; --text-dark: #1f2937; --text-mute: #6b7280;
+            --brand-green: #166534; --brand-light: #dcfce7; --success: #22c55e;
+            --border: #e5e7eb; --warning: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 90px; }
+
+        /* App Header */
+        .header {
+            background: var(--surface); padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border);
+            padding-top: calc(15px + env(safe-area-inset-top));
+        }
+        .header h2 { font-size: 1.2rem; font-weight: 800; }
+        .help-icon { color: var(--brand-green); font-size: 1.2rem; cursor: pointer; }
+
+        .container { padding: 20px; }
+
+        /* Master Wallet Card */
+        .earnings-card {
+            background: linear-gradient(135deg, var(--brand-green), #064e3b);
+            border-radius: 20px; padding: 25px; color: white;
+            box-shadow: 0 10px 20px rgba(22, 101, 52, 0.2);
+            position: relative; overflow: hidden; margin-bottom: 25px;
+        }
+        .earnings-card::after {
+            content: ''; position: absolute; right: -30px; bottom: -30px;
+            width: 120px; height: 120px; background: rgba(255,255,255,0.1);
+            border-radius: 50%; filter: blur(20px);
+        }
+        
+        .e-label { font-size: 0.9rem; color: var(--brand-light); margin-bottom: 5px; font-weight: 500; }
+        .e-amount { font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; }
+        
+        .card-actions { display: flex; gap: 10px; position: relative; z-index: 2; }
+        .btn-withdraw {
+            background: white; color: var(--brand-green); padding: 12px 20px;
+            border: none; border-radius: 12px; font-weight: 700; flex: 1;
+            display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-withdraw:active { transform: scale(0.98); }
+
+        /* Stats Row */
+        .stats-row { display: flex; gap: 15px; margin-bottom: 25px; }
+        .stat-box {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 15px; flex: 1;
+        }
+        .stat-box h4 { font-size: 0.75rem; color: var(--text-mute); text-transform: uppercase; margin-bottom: 5px; }
+        .stat-box h2 { font-size: 1.2rem; font-weight: 800; color: var(--text-dark); }
+        .stat-box.highlight h2 { color: var(--success); }
+
+        /* Payout History */
+        .section-title { font-size: 1rem; font-weight: 800; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .filter-txt { font-size: 0.8rem; color: var(--brand-green); font-weight: 600; cursor: pointer; }
+
+        .tx-list { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+        .tx-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #f3f4f6; }
+        .tx-item:last-child { border-bottom: none; }
+        
+        .tx-left { display: flex; align-items: center; gap: 15px; }
+        .tx-icon { width: 40px; height: 40px; border-radius: 10px; background: #f0fdf4; color: var(--success); display: flex; justify-content: center; align-items: center; font-size: 1.1rem; }
+        .tx-icon.withdraw { background: #fffbeb; color: var(--warning); }
+        
+        .tx-info h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
+        .tx-info p { font-size: 0.75rem; color: var(--text-mute); font-weight: 500; }
+        
+        .tx-amount { font-weight: 800; font-size: 1rem; }
+        .tx-amount.plus { color: var(--success); }
+        .tx-amount.minus { color: var(--text-dark); }
+
+        /* Bottom Nav (Partner) */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--surface); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; padding: 12px 0;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-mute); font-size: 1.2rem; text-decoration: none; }
+        .nav-item.active { color: var(--brand-green); }
+        .nav-item span { font-size: 0.7rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Earnings & Payouts</h2>
+        <i class="fas fa-question-circle help-icon"></i>
+    </div>
+
+    <div class="container">
+        
+        <div class="earnings-card">
+            <div class="e-label">Available for Withdrawal</div>
+            <div class="e-amount">₹4,250.00</div>
+            <div class="card-actions">
+                <button class="btn-withdraw" onclick="withdrawFunds()"><i class="fas fa-university"></i> Withdraw to Bank</button>
+            </div>
+            <p style="font-size: 0.75rem; margin-top: 15px; color: var(--brand-light);">Auto-settlement every Monday at 12:00 AM.</p>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-box highlight">
+                <h4>Total Earned</h4>
+                <h2>₹12,400</h2>
+            </div>
+            <div class="stat-box">
+                <h4>Completed Jobs</h4>
+                <h2>84</h2>
+            </div>
+        </div>
+
+        <div class="section-title">
+            Recent Ledger
+            <span class="filter-txt">Download PDF</span>
+        </div>
+
+        <div class="tx-list">
+            <!-- Job Earning -->
+            <div class="tx-item">
+                <div class="tx-left">
+                    <div class="tx-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="tx-info">
+                        <h4>PAN Card Apply</h4>
+                        <p>Order #DSN847 • Today</p>
+                    </div>
+                </div>
+                <div class="tx-amount plus">+₹150</div>
+            </div>
+
+            <!-- Job Earning -->
+            <div class="tx-item">
+                <div class="tx-left">
+                    <div class="tx-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="tx-info">
+                        <h4>Aadhaar Update</h4>
+                        <p>Order #DSN846 • Yesterday</p>
+                    </div>
+                </div>
+                <div class="tx-amount plus">+₹100</div>
+            </div>
+
+            <!-- Bank Withdrawal -->
+            <div class="tx-item">
+                <div class="tx-left">
+                    <div class="tx-icon withdraw"><i class="fas fa-exchange-alt"></i></div>
+                    <div class="tx-info">
+                        <h4>Bank Transfer</h4>
+                        <p>SBI ****4589 • 24 May</p>
+                    </div>
+                </div>
+                <div class="tx-amount minus">-₹2,000</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chart-pie"></i><span>Stats</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-list-alt"></i><span>Orders</span></a>
+        <a href="earnings.html" class="nav-item active"><i class="fas fa-wallet"></i><span>Earnings</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-user-cog"></i><span>Profile</span></a>
+    </div>
+
+    <script>
+        function withdrawFunds() {
+            const btn = document.querySelector('.btn-withdraw');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            
+            setTimeout(() => {
+                alert("Withdrawal Request of ₹4,250 sent to AdminHQ for processing. It will reflect in your linked bank account within 2-4 hours.");
+                btn.innerHTML = '<i class="fas fa-check"></i> Request Sent';
+                btn.style.background = '#dcfce7';
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-university"></i> Withdraw to Bank';
+                    btn.style.background = 'white';
+                }, 3000);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
