@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Dashboard | Digital Sahayata</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase Engine -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --mute: #64748b;
+            --brand: #2563eb; --brand-dark: #1e40af; --success: #10b981; --warning: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
+
+        /* Top Header */
+        .dash-header {
+            background: var(--surface); padding: 20px;
+            padding-top: calc(20px + env(safe-area-inset-top));
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100;
+        }
+        .dash-header h1 { font-size: 1.4rem; font-weight: 800; }
+        
+        /* Digital Wallet Card */
+        .wallet-container { padding: 20px; }
+        .wallet-card {
+            background: linear-gradient(135deg, var(--text), #334155);
+            border-radius: 20px; padding: 25px; color: white;
+            box-shadow: 0 15px 25px -5px rgba(0,0,0,0.2); position: relative; overflow: hidden;
+        }
+        .wallet-card::after {
+            content: ''; position: absolute; right: -20px; top: -20px;
+            width: 120px; height: 120px; background: var(--brand);
+            border-radius: 50%; filter: blur(30px); opacity: 0.4;
+        }
+        .wallet-label { font-size: 0.9rem; color: #cbd5e1; margin-bottom: 5px; }
+        .wallet-balance { font-size: 2.5rem; font-weight: 800; margin-bottom: 20px; }
+        .wallet-actions { display: flex; gap: 10px; position: relative; z-index: 2; }
+        .btn-wallet {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: white; padding: 10px 20px; border-radius: 10px; font-weight: 600;
+            display: flex; align-items: center; gap: 8px; cursor: pointer; flex: 1; justify-content: center;
+        }
+
+        /* Live Tracking Section */
+        .section-title { padding: 0 20px; margin: 25px 0 15px 0; font-size: 1.2rem; font-weight: 800; }
+        
+        .orders-container { padding: 0 20px; }
+        .order-card {
+            background: var(--surface); border-radius: 16px; padding: 20px;
+            border: 1px solid #e2e8f0; margin-bottom: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .order-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+        .order-id { font-size: 0.85rem; color: var(--mute); font-weight: 600; }
+        .order-status { background: #dcfce7; color: var(--success); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+        
+        .order-details { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; }
+        .order-icon { width: 50px; height: 50px; background: #eff6ff; color: var(--brand); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; }
+        .order-info h3 { font-size: 1.1rem; font-weight: 700; }
+        .order-info p { font-size: 0.85rem; color: var(--mute); margin-top: 3px; }
+
+        /* Progress Tracker */
+        .tracker { display: flex; justify-content: space-between; position: relative; margin-top: 10px; }
+        .tracker::before { content: ''; position: absolute; top: 12px; left: 10%; width: 80%; height: 2px; background: #e2e8f0; z-index: 1; }
+        .track-step { display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; z-index: 2; }
+        .track-dot { width: 26px; height: 26px; background: var(--surface); border: 2px solid #e2e8f0; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.6rem; color: white; }
+        .track-step.done .track-dot { background: var(--brand); border-color: var(--brand); }
+        .track-step span { font-size: 0.7rem; font-weight: 600; color: var(--mute); }
+        .track-step.done span { color: var(--text); }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--surface); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #e2e8f0; padding-bottom: calc(15px + env(safe-area-inset-bottom)); z-index: 1000; }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--mute); text-decoration: none; font-size: 1.3rem; }
+        .nav-btn.active { color: var(--brand); }
+        .nav-btn span { font-size: 0.7rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="dash-header">
+        <h1>My Dashboard</h1>
+        <i class="fas fa-bell" style="font-size: 1.2rem; color: var(--text);"></i>
+    </div>
+
+    <!-- Wallet Section -->
+    <div class="wallet-container">
+        <div class="wallet-card">
+            <div class="wallet-label">Available Balance</div>
+            <div class="wallet-balance">₹0.00</div>
+            <div class="wallet-actions">
+                <button class="btn-wallet"><i class="fas fa-plus"></i> Add Money</button>
+                <button class="btn-wallet"><i class="fas fa-history"></i> History</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Orders Hub -->
+    <div class="section-title">Active Requests</div>
+    <div class="orders-container" id="ordersList">
+        
+        <!-- Order Card Example (Will be fetched from Firebase in next steps) -->
+        <div class="order-card">
+            <div class="order-header">
+                <span class="order-id">#DSN-847291</span>
+                <span class="order-status">In Progress</span>
+            </div>
+            
+            <div class="order-details">
+                <div class="order-icon"><i class="fas fa-briefcase"></i></div>
+                <div class="order-info">
+                    <h3>Startup Registration</h3>
+                    <p>Partner: MP Online Center</p>
+                </div>
+            </div>
+
+            <!-- Live Tracker -->
+            <div class="tracker">
+                <div class="track-step done">
+                    <div class="track-dot"><i class="fas fa-check"></i></div>
+                    <span>Placed</span>
+                </div>
+                <div class="track-step done">
+                    <div class="track-dot"><i class="fas fa-check"></i></div>
+                    <span>Accepted</span>
+                </div>
+                <div class="track-step">
+                    <div class="track-dot"></div>
+                    <span>Working</span>
+                </div>
+                <div class="track-step">
+                    <div class="track-dot"></div>
+                    <span>Done</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="home_screen.html" class="nav-btn"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="#" class="nav-btn active"><i class="fas fa-file-alt"></i><span>Dashboard</span></a>
+        <a href="#" class="nav-btn"><i class="fas fa-user"></i><span>Profile</span></a>
+    </div>
+
+</body>
+</html>
