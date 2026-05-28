@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Order Details | Partner App</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #f3f4f6; --surface: #ffffff; --text-dark: #1f2937; --text-mute: #6b7280;
+            --brand-green: #166534; --brand-light: #dcfce7; --success: #22c55e;
+            --warning: #f59e0b; --border: #e5e7eb;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 90px; }
+
+        /* Header */
+        .app-header {
+            background: var(--brand-green); color: white;
+            padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+            padding-top: calc(15px + env(safe-area-inset-top));
+            box-shadow: 0 4px 10px rgba(22, 101, 52, 0.2);
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .back-btn { color: white; font-size: 1.2rem; text-decoration: none; }
+        .app-header h2 { font-size: 1.1rem; font-weight: 700; }
+        .header-right { font-size: 0.85rem; font-weight: 600; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 8px; }
+
+        .container { padding: 20px; }
+
+        /* Order Summary Card */
+        .card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .order-title { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #f3f4f6; padding-bottom: 15px; }
+        .order-title h1 { font-size: 1.3rem; font-weight: 800; margin-bottom: 5px; }
+        .order-id { font-size: 0.8rem; color: var(--text-mute); font-family: monospace; }
+        .order-price { font-size: 1.4rem; font-weight: 800; color: var(--brand-green); }
+
+        /* Customer Info */
+        .customer-box { display: flex; align-items: center; gap: 15px; }
+        .customer-avatar { width: 45px; height: 45px; background: var(--brand-light); color: var(--brand-green); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; font-weight: 700; }
+        .customer-info { flex: 1; }
+        .customer-info h3 { font-size: 1rem; font-weight: 700; }
+        .customer-info p { font-size: 0.8rem; color: var(--text-mute); }
+        .contact-actions { display: flex; gap: 10px; }
+        .contact-btn { width: 40px; height: 40px; border-radius: 50%; border: none; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
+        .btn-call { background: #eff6ff; color: #2563eb; }
+        .btn-chat { background: #fef2f2; color: #ef4444; }
+        .contact-btn:active { transform: scale(0.9); }
+
+        /* Progress Updater */
+        .section-title { font-size: 0.9rem; font-weight: 700; color: var(--text-mute); text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px; }
+        
+        .timeline { display: flex; flex-direction: column; gap: 20px; position: relative; }
+        .timeline::before { content: ''; position: absolute; left: 14px; top: 10px; height: calc(100% - 20px); width: 2px; background: var(--border); z-index: 1; }
+        
+        .step { display: flex; gap: 15px; position: relative; z-index: 2; align-items: flex-start; }
+        .step-dot { width: 30px; height: 30px; border-radius: 50%; background: var(--surface); border: 2px solid var(--border); display: flex; justify-content: center; align-items: center; font-size: 0.7rem; color: white; transition: 0.3s; }
+        .step-content { flex: 1; padding-top: 4px; }
+        .step-content h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; color: var(--text-mute); }
+        .step-content p { font-size: 0.8rem; color: var(--text-mute); }
+
+        /* Active/Done States */
+        .step.done .step-dot { background: var(--success); border-color: var(--success); }
+        .step.done .step-content h4 { color: var(--text-dark); }
+        
+        .step.active .step-dot { background: var(--warning); border-color: var(--warning); box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2); }
+        .step.active .step-content h4 { color: var(--text-dark); }
+
+        /* Document Upload */
+        .upload-area { border: 2px dashed var(--border); border-radius: 12px; padding: 25px; text-align: center; cursor: pointer; transition: 0.2s; background: #f9fafb; }
+        .upload-area:active { border-color: var(--brand-green); background: var(--brand-light); }
+        .upload-area i { font-size: 2rem; color: var(--brand-green); margin-bottom: 10px; }
+        .upload-area p { font-size: 0.9rem; font-weight: 600; color: var(--text-dark); }
+        .upload-area span { font-size: 0.75rem; color: var(--text-mute); }
+
+        /* Action Footer */
+        .bottom-action {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--surface); padding: 15px 20px;
+            padding-bottom: calc(15px + env(safe-area-inset-bottom));
+            border-top: 1px solid var(--border); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); z-index: 100;
+        }
+        .btn-primary {
+            width: 100%; padding: 18px; border: none; border-radius: 12px;
+            background: var(--brand-green); color: white; font-size: 1.1rem;
+            font-weight: 700; cursor: pointer; transition: 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-primary:active { transform: scale(0.98); }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-header">
+        <div class="header-left">
+            <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+            <h2>Job Details</h2>
+        </div>
+        <div class="header-right">Urgent</div>
+    </div>
+
+    <div class="container">
+        
+        <div class="card">
+            <div class="order-title">
+                <div>
+                    <h1>PAN Card Apply</h1>
+                    <div class="order-id">#DSN-847291</div>
+                </div>
+                <div class="order-price">₹150</div>
+            </div>
+            
+            <div class="customer-box">
+                <div class="customer-avatar"><i class="fas fa-user"></i></div>
+                <div class="customer-info">
+                    <h3>Utkrasth Jhariya</h3>
+                    <p>Katra, Mandla (1.2 km)</p>
+                </div>
+                <div class="contact-actions">
+                    <button class="contact-btn btn-call" onclick="alert('Calling Customer...')"><i class="fas fa-phone-alt"></i></button>
+                    <button class="contact-btn btn-chat" onclick="alert('Opening Chat...')"><i class="fas fa-comment-dots"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Job Progress</div>
+        <div class="card">
+            <div class="timeline" id="jobTimeline">
+                
+                <div class="step done" id="step1">
+                    <div class="step-dot"><i class="fas fa-check"></i></div>
+                    <div class="step-content">
+                        <h4>Order Accepted</h4>
+                        <p>10:45 AM, Today</p>
+                    </div>
+                </div>
+
+                <div class="step active" id="step2">
+                    <div class="step-dot"><i class="fas fa-cog fa-spin"></i></div>
+                    <div class="step-content">
+                        <h4>Processing Work</h4>
+                        <p>Fill forms and verify docs</p>
+                    </div>
+                </div>
+
+                <div class="step" id="step3">
+                    <div class="step-dot"></div>
+                    <div class="step-content">
+                        <h4>Job Completed</h4>
+                        <p>Upload final receipt</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="section-title">Submit Proof</div>
+        <div class="card" style="padding: 10px;">
+            <div class="upload-area" id="uploadBtn" onclick="simulateUpload()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Upload Receipt / Document</p>
+                <span>Tap to take a photo or select from gallery</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bottom-action">
+        <button class="btn-primary" id="mainAction" onclick="updateStatus()">Mark as Completed <i class="fas fa-check-circle"></i></button>
+    </div>
+
+    <script>
+        let isUploaded = false;
+
+        function simulateUpload() {
+            const uploadBox = document.getElementById('uploadBtn');
+            uploadBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i><p>Uploading...</p>';
+            
+            setTimeout(() => {
+                uploadBox.innerHTML = '<i class="fas fa-file-invoice" style="color: #22c55e;"></i><p style="color: #166534;">Receipt_DSN847.pdf</p><span style="color:#22c55e;">Upload Successful!</span>';
+                uploadBox.style.borderColor = '#22c55e';
+                uploadBox.style.background = '#f0fdf4';
+                isUploaded = true;
+            }, 1500);
+        }
+
+        function updateStatus() {
+            if(!isUploaded) {
+                alert("Please upload the final document/receipt first before completing the job.");
+                return;
+            }
+
+            const btn = document.getElementById('mainAction');
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Securing Job...';
+            btn.style.opacity = '0.8';
+
+            setTimeout(() => {
+                // Update Timeline
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step2').classList.add('done');
+                document.getElementById('step2').querySelector('.step-dot').innerHTML = '<i class="fas fa-check"></i>';
+                
+                document.getElementById('step3').classList.add('done');
+                document.getElementById('step3').querySelector('.step-dot').innerHTML = '<i class="fas fa-check"></i>';
+
+                // Update Button
+                btn.innerHTML = 'Payment Added to Wallet <i class="fas fa-wallet"></i>';
+                btn.style.background = '#f59e0b'; // Gold/Warning color for earnings
+                btn.style.opacity = '1';
+
+                setTimeout(() => {
+                    alert("Job Done! ₹150 added to your Partner Earnings.");
+                    window.location.href = "dashboard.html";
+                }, 2000);
+
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
