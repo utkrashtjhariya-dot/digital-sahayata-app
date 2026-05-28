@@ -35,6 +35,9 @@
         .nav-item { text-decoration: none; color: var(--text-mute); font-weight: 600; font-size: 0.95rem; transition: 0.2s; }
         .nav-item:hover { color: var(--brand-blue); }
         
+        .hq-btn { color: #ea580c; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+        .hq-btn:hover { color: #c2410c; }
+
         .nav-actions { display: flex; gap: 15px; }
         .btn-outline { padding: 10px 20px; border: 2px solid var(--border); border-radius: 8px; font-weight: 700; color: var(--text-dark); text-decoration: none; transition: 0.2s; }
         .btn-outline:hover { border-color: var(--brand-blue); color: var(--brand-blue); }
@@ -55,7 +58,7 @@
         .hero-search input { flex: 1; border: none; background: transparent; outline: none; padding: 10px 15px; font-size: 1rem; color: var(--text-dark); }
         .hero-search button { background: var(--brand-blue); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; }
 
-        /* Popular Services Grid (Square Colorful Icons) */
+        /* Popular Services Grid */
         .services-section { padding: 40px 5% 80px 5%; background: var(--surface); border-top: 1px solid var(--border); }
         .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
         .section-header h2 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
@@ -68,13 +71,12 @@
             padding: 25px 20px; text-align: center; text-decoration: none; color: var(--text-dark);
             transition: 0.3s; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            aspect-ratio: 1 / 1; /* Makes the card perfectly square */
+            aspect-ratio: 1 / 1; 
         }
         .service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--brand-blue); }
         
         .s-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; margin-bottom: 15px; }
         
-        /* Colorful Icon Backgrounds */
         .ic-blue { background: #eff6ff; color: #2563eb; }
         .ic-green { background: #ecfdf5; color: #10b981; }
         .ic-orange { background: #fff7ed; color: #f97316; }
@@ -89,24 +91,37 @@
             .hero-section { flex-direction: column; text-align: center; padding-top: 40px; }
             .hero-content h1 { font-size: 2.5rem; }
             .service-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            /* Mobile Nav Action adjustment */
+            .nav-actions { align-items: center; }
+            .nav-actions .hq-btn-mobile { display: block; color: #ea580c; font-size: 1.2rem; margin-right: 15px; }
         }
+        
+        /* Hide mobile HQ button on desktop */
+        .hq-btn-mobile { display: none; }
     </style>
 </head>
 <body>
 
+    <!-- Top Navigation -->
     <nav class="navbar">
         <a href="#" class="logo"><i class="fas fa-fingerprint"></i> Digital Sahayata</a>
         <div class="nav-links">
             <a href="#" class="nav-item">Services</a>
             <a href="#" class="nav-item">Track Order</a>
             <a href="partner_app/login.html" class="nav-item">Partner Network</a>
+            <!-- Desktop HQ Link -->
+            <a href="admin_panel/dashboard.html" class="nav-item hq-btn"><i class="fas fa-shield-alt"></i> Admin HQ</a>
         </div>
         <div class="nav-actions">
+            <!-- Mobile HQ Link (Shows only on phone) -->
+            <a href="admin_panel/dashboard.html" class="hq-btn-mobile"><i class="fas fa-shield-alt"></i></a>
             <a href="customer_app/login.html" class="btn-outline">Login</a>
             <a href="customer_app/login.html" class="btn-primary">Sign Up</a>
         </div>
     </nav>
 
+    <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
             <div class="hero-badge">India's Largest Service Network</div>
@@ -120,6 +135,7 @@
         </div>
     </section>
 
+    <!-- Popular Services Grid -->
     <section class="services-section">
         <div class="section-header">
             <h2>Popular Services</h2>
