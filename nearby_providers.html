@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Nearby Providers | Digital Sahayata</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --mute: #64748b;
+            --brand: #2563eb; --brand-glow: rgba(37, 99, 235, 0.15);
+            --success: #10b981; --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 30px; }
+
+        /* App Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            padding: 15px 20px; display: flex; align-items: center; gap: 15px;
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border);
+            padding-top: calc(15px + env(safe-area-inset-top));
+        }
+        .back-btn { font-size: 1.2rem; color: var(--text); cursor: pointer; text-decoration: none; }
+        .header-text h2 { font-size: 1.1rem; font-weight: 700; }
+        .header-text p { font-size: 0.75rem; color: var(--mute); font-weight: 500; display: flex; align-items: center; gap: 4px; }
+
+        /* Map UI Placeholder */
+        .map-container {
+            width: 100%; height: 200px;
+            background: url('https://i.ibb.co/6P01K6q/map-placeholder.jpg') center/cover no-repeat;
+            position: relative; border-bottom: 1px solid var(--border);
+        }
+        .map-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 50px;
+            background: linear-gradient(to top, var(--bg), transparent);
+        }
+        .pulse-pin {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 20px; height: 20px; background: var(--brand); border-radius: 50%;
+            box-shadow: 0 0 0 10px var(--brand-glow); animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--brand-glow); } 70% { box-shadow: 0 0 0 20px rgba(37,99,235,0); } 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0); } }
+
+        /* Providers List */
+        .list-container { padding: 20px; }
+        .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .filter-btn { font-size: 0.8rem; color: var(--brand); background: #eff6ff; padding: 5px 12px; border-radius: 20px; font-weight: 600; }
+
+        .provider-card {
+            background: var(--surface); border-radius: 16px; padding: 16px;
+            border: 1px solid var(--border); margin-bottom: 15px;
+            display: flex; gap: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+        .provider-card:active { transform: scale(0.98); border-color: var(--brand); }
+        
+        .provider-img {
+            width: 65px; height: 65px; border-radius: 12px;
+            background: #f1f5f9; display: flex; justify-content: center; align-items: center;
+            font-size: 1.8rem; color: var(--mute);
+        }
+        
+        .provider-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .provider-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+        .meta-data { display: flex; align-items: center; gap: 10px; font-size: 0.75rem; color: var(--mute); font-weight: 500; margin-bottom: 6px; }
+        
+        .rating-badge { background: #ecfdf5; color: var(--success); padding: 3px 6px; border-radius: 6px; font-weight: 700; display: flex; align-items: center; gap: 3px; }
+        
+        .status-open { color: var(--success); font-weight: 600; font-size: 0.75rem; }
+        .status-closed { color: #ef4444; font-weight: 600; font-size: 0.75rem; }
+
+        .select-btn {
+            background: var(--brand); color: white; border: none;
+            padding: 8px 16px; border-radius: 10px; font-weight: 600;
+            font-size: 0.85rem; cursor: pointer; align-self: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="home_screen.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <div class="header-text">
+            <h2>Nearby Service Providers</h2>
+            <p><i class="fas fa-map-marker-alt" style="color: var(--brand);"></i> Mandla, Madhya Pradesh</p>
+        </div>
+    </div>
+
+    <!-- Live Map Placeholder -->
+    <div class="map-container">
+        <div class="pulse-pin"></div>
+        <div class="map-overlay"></div>
+    </div>
+
+    <!-- Provider Directory -->
+    <div class="list-container">
+        <div class="section-title">
+            Top Rated Near You
+            <div class="filter-btn"><i class="fas fa-sliders-h"></i> Filter</div>
+        </div>
+
+        <!-- Provider 1 -->
+        <div class="provider-card">
+            <div class="provider-img"><i class="fas fa-store"></i></div>
+            <div class="provider-info">
+                <h3>MP Online Center</h3>
+                <div class="meta-data">
+                    <span class="rating-badge"><i class="fas fa-star"></i> 4.8</span>
+                    <span><i class="fas fa-location-arrow"></i> 0.8 km</span>
+                </div>
+                <div class="status-open">Open • Closes 8:00 PM</div>
+            </div>
+            <button class="select-btn" onclick="assignProvider('MP Online Center')">Select</button>
+        </div>
+
+        <!-- Provider 2 -->
+        <div class="provider-card">
+            <div class="provider-img"><i class="fas fa-laptop-house"></i></div>
+            <div class="provider-info">
+                <h3>CSC Digital Seva</h3>
+                <div class="meta-data">
+                    <span class="rating-badge"><i class="fas fa-star"></i> 4.6</span>
+                    <span><i class="fas fa-location-arrow"></i> 1.2 km</span>
+                </div>
+                <div class="status-open">Open • Closes 7:00 PM</div>
+            </div>
+            <button class="select-btn" onclick="assignProvider('CSC Digital Seva')">Select</button>
+        </div>
+
+        <!-- Provider 3 -->
+        <div class="provider-card" style="opacity: 0.7;">
+            <div class="provider-img"><i class="fas fa-desktop"></i></div>
+            <div class="provider-info">
+                <h3>Digital Point</h3>
+                <div class="meta-data">
+                    <span class="rating-badge" style="background: #f1f5f9; color: var(--mute);"><i class="fas fa-star"></i> 4.5</span>
+                    <span><i class="fas fa-location-arrow"></i> 1.5 km</span>
+                </div>
+                <div class="status-closed">Closed • Opens Tomorrow</div>
+            </div>
+            <button class="select-btn" style="background: var(--mute);" disabled>Closed</button>
+        </div>
+    </div>
+
+    <script>
+        function assignProvider(providerName) {
+            alert(providerName + " has been selected. Order will be routed to their Partner App.");
+            // In the full system, this ID will be passed to the Firebase booking engine.
+        }
+    </script>
+</body>
+</html>
+
