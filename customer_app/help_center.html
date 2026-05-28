@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Help Center | Digital Sahayata</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #f8fafc; --surface: #ffffff; --text-dark: #0f172a; --text-mute: #64748b;
+            --brand: #2563eb; --brand-light: #eff6ff; --border: #e2e8f0;
+            --gradient: linear-gradient(135deg, #2563eb, #8b5cf6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text-dark); padding-bottom: 90px; }
+
+        /* Support Header */
+        .support-header {
+            background: var(--gradient); padding: 30px 20px; color: white;
+            padding-top: calc(30px + env(safe-area-inset-top));
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+        .header-top { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .back-btn { color: white; font-size: 1.2rem; text-decoration: none; }
+        .header-top h1 { font-size: 1.3rem; font-weight: 800; }
+
+        /* Smart Search */
+        .search-box {
+            background: var(--surface); border-radius: 16px; padding: 5px 5px 5px 20px;
+            display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .search-box i { color: var(--text-mute); font-size: 1.1rem; }
+        .search-box input {
+            flex: 1; border: none; outline: none; padding: 15px 0;
+            font-size: 1rem; color: var(--text-dark);
+        }
+        .btn-search {
+            background: var(--brand); color: white; border: none; border-radius: 12px;
+            width: 45px; height: 45px; display: flex; justify-content: center; align-items: center;
+            font-size: 1.1rem; cursor: pointer; transition: 0.2s;
+        }
+
+        /* Quick Topics */
+        .section-title { padding: 0 20px; margin: 30px 0 15px 0; font-size: 1.1rem; font-weight: 800; }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px; }
+        .topic-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+            padding: 15px; display: flex; align-items: center; gap: 12px;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .topic-card:active { border-color: var(--brand); transform: scale(0.98); }
+        .topic-icon { width: 35px; height: 35px; border-radius: 10px; background: var(--brand-light); color: var(--brand); display: flex; justify-content: center; align-items: center; font-size: 1rem; }
+        .topic-card span { font-size: 0.85rem; font-weight: 600; }
+
+        /* FAQ Accordion */
+        .faq-container { padding: 0 20px; margin-bottom: 30px; }
+        .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+        .faq-question {
+            padding: 18px 15px; display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer; color: var(--text-dark);
+        }
+        .faq-answer {
+            padding: 0 15px; font-size: 0.85rem; color: var(--text-mute);
+            line-height: 1.5; max-height: 0; transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        .faq-item.active .faq-answer { padding: 0 15px 18px 15px; max-height: 150px; }
+        .faq-item.active .faq-question { color: var(--brand); }
+        .faq-question i { transition: transform 0.3s; color: var(--text-mute); }
+        .faq-item.active .faq-question i { transform: rotate(180deg); color: var(--brand); }
+
+        /* Contact Support */
+        .contact-box { background: var(--surface); margin: 0 20px; border-radius: 16px; border: 1px solid var(--border); padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .contact-info h3 { font-size: 1rem; font-weight: 800; margin-bottom: 5px; }
+        .contact-info p { font-size: 0.8rem; color: var(--text-mute); font-weight: 500; }
+        .btn-call { background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
+
+        /* Bottom Nav */
+        .bottom-nav-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around;
+            padding: 15px 0; padding-bottom: calc(15px + env(safe-area-inset-bottom)); z-index: 1000;
+        }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-mute); text-decoration: none; }
+        .nav-btn.active { color: var(--brand); }
+        .nav-btn i { font-size: 1.4rem; }
+        .nav-btn span { font-size: 0.7rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="support-header">
+        <div class="header-top">
+            <a href="profile.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+            <h1>Help & Support</h1>
+        </div>
+        
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search issues, services, or FAQs..." id="searchInput">
+            <button class="btn-search" onclick="searchHelp()"><i class="fas fa-magic"></i></button>
+        </div>
+    </div>
+
+    <div class="section-title">Quick Topics</div>
+    <div class="topics-grid">
+        <div class="topic-card">
+            <div class="topic-icon"><i class="fas fa-box-open"></i></div>
+            <span>Order Status</span>
+        </div>
+        <div class="topic-card">
+            <div class="topic-icon" style="color: #10b981; background: #ecfdf5;"><i class="fas fa-wallet"></i></div>
+            <span>Refunds</span>
+        </div>
+        <div class="topic-card">
+            <div class="topic-icon" style="color: #8b5cf6; background: #f5f3ff;"><i class="fas fa-user-shield"></i></div>
+            <span>My Account</span>
+        </div>
+        <div class="topic-card">
+            <div class="topic-icon" style="color: #f59e0b; background: #fffbeb;"><i class="fas fa-star"></i></div>
+            <span>Feedback</span>
+        </div>
+    </div>
+
+    <div class="section-title">Frequently Asked Questions</div>
+    <div class="faq-container">
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                How long does a service take? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                Most services like ID updates are completed within 2-3 business days. Urgent processing options are available at checkout.
+            </div>
+        </div>
+        
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                Are my documents safe? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                Yes, absolutely. We use bank-level encryption. Your documents are automatically deleted from the partner's app once the order is completed.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">
+                How do I get a refund? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                If a service gets rejected by the partner, the amount is instantly refunded to your Digital Sahayata Wallet.
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-box">
+        <div class="contact-info">
+            <h3>Need more help?</h3>
+            <p>Our Mandla HQ team is 24/7 online.</p>
+        </div>
+        <button class="btn-call" onclick="window.location.href='chat.html'"><i class="fas fa-comment-dots"></i> Chat Now</button>
+    </div>
+
+    <!-- Padding for bottom nav -->
+    <div style="height: 30px;"></div>
+
+    <nav class="bottom-nav-bar">
+        <a href="home_screen.html" class="nav-btn">
+            <i class="fas fa-home"></i><span>Home</span>
+        </a>
+        <a href="dashboard.html" class="nav-btn">
+            <i class="fas fa-file-alt"></i><span>Orders</span>
+        </a>
+        <a href="wallet.html" class="nav-btn">
+            <i class="fas fa-wallet"></i><span>Wallet</span>
+        </a>
+        <a href="profile.html" class="nav-btn active">
+            <i class="fas fa-user"></i><span>Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        function toggleFaq(element) {
+            // Close other FAQs
+            document.querySelectorAll('.faq-item').forEach(item => {
+                if(item !== element) item.classList.remove('active');
+            });
+            // Toggle current FAQ
+            element.classList.toggle('active');
+        }
+
+        function searchHelp() {
+            const btn = document.querySelector('.btn-search');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-magic"></i>';
+                alert("AI Engine will pull matching articles from the database!");
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
+
