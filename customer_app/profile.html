@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>My Profile | Digital Sahayata</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #f4f4f5; --surface: #ffffff; --text-dark: #18181b; --text-mute: #71717a;
+            --brand: #2563eb; --brand-light: #eff6ff; --border: #e4e4e7;
+            --danger: #ef4444; --success: #10b981;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text-dark); padding-bottom: 90px; }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border);
+            padding-top: calc(15px + env(safe-area-inset-top));
+        }
+        .header h2 { font-size: 1.2rem; font-weight: 800; }
+        .edit-btn { font-size: 0.9rem; color: var(--brand); font-weight: 600; cursor: pointer; }
+
+        /* Profile Hero */
+        .profile-hero {
+            background: var(--surface); padding: 30px 20px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            border-bottom: 1px solid var(--border); margin-bottom: 10px;
+        }
+        .avatar-container { position: relative; margin-bottom: 15px; }
+        .avatar {
+            width: 90px; height: 90px; border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #8b5cf6);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2.5rem; color: white; font-weight: 700;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+        .kyc-badge {
+            position: absolute; bottom: 0; right: 0; background: var(--success);
+            color: white; width: 28px; height: 28px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            border: 3px solid var(--surface); font-size: 0.7rem;
+        }
+        .profile-hero h1 { font-size: 1.4rem; font-weight: 800; margin-bottom: 5px; }
+        .profile-hero p { color: var(--text-mute); font-size: 0.9rem; font-weight: 500; }
+        .user-id { display: inline-block; background: var(--bg); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: var(--text-mute); margin-top: 10px; font-family: monospace; }
+
+        /* Settings Menu */
+        .settings-group { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+        .group-title { padding: 15px 20px 5px 20px; font-size: 0.8rem; font-weight: 700; color: var(--text-mute); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .menu-item {
+            display: flex; align-items: center; padding: 16px 20px;
+            border-bottom: 1px solid #f4f4f5; cursor: pointer; transition: 0.2s;
+        }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item:active { background: #fafafa; }
+        
+        .menu-icon {
+            width: 35px; height: 35px; border-radius: 10px;
+            display: flex; justify-content: center; align-items: center;
+            margin-right: 15px; font-size: 1.1rem;
+        }
+        .icon-blue { background: #eff6ff; color: #2563eb; }
+        .icon-green { background: #ecfdf5; color: #10b981; }
+        .icon-purple { background: #f5f3ff; color: #8b5cf6; }
+        .icon-orange { background: #fff7ed; color: #f97316; }
+        .icon-gray { background: #f4f4f5; color: #52525b; }
+        .icon-red { background: #fef2f2; color: #ef4444; }
+
+        .menu-content { flex: 1; }
+        .menu-content h3 { font-size: 1rem; font-weight: 600; color: var(--text-dark); }
+        .menu-content p { font-size: 0.75rem; color: var(--text-mute); margin-top: 2px; }
+        
+        .menu-arrow { color: #a1a1aa; font-size: 0.9rem; }
+
+        /* Toggle Switch */
+        .toggle-switch { width: 44px; height: 24px; background: var(--brand); border-radius: 12px; position: relative; cursor: pointer; }
+        .toggle-switch::after { content: ''; position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: 0.3s; }
+
+        /* Bottom Nav */
+        .bottom-nav-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-around;
+            padding: 15px 0; padding-bottom: calc(15px + env(safe-area-inset-bottom)); z-index: 1000;
+        }
+        .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-mute); text-decoration: none; }
+        .nav-btn.active { color: var(--brand); }
+        .nav-btn i { font-size: 1.4rem; }
+        .nav-btn span { font-size: 0.7rem; font-weight: 600; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Profile</h2>
+        <div class="edit-btn">Edit</div>
+    </div>
+
+    <div class="profile-hero">
+        <div class="avatar-container">
+            <div class="avatar">U</div>
+            <div class="kyc-badge"><i class="fas fa-shield-alt"></i></div>
+        </div>
+        <h1>Utkrasth Jhariya</h1>
+        <p>+91 98765 43210 • utkrasth@example.com</p>
+        <div class="user-id">UID: DSN-9482-771</div>
+    </div>
+
+    <div class="group-title">Account</div>
+    <div class="settings-group">
+        <div class="menu-item" onclick="alert('Addresses Feature Coming Soon')">
+            <div class="menu-icon icon-blue"><i class="fas fa-map-marker-alt"></i></div>
+            <div class="menu-content">
+                <h3>Saved Addresses</h3>
+                <p>Katra, Mandla (Home)</p>
+            </div>
+            <i class="fas fa-chevron-right menu-arrow"></i>
+        </div>
+        <div class="menu-item">
+            <div class="menu-icon icon-green"><i class="fas fa-id-card"></i></div>
+            <div class="menu-content">
+                <h3>KYC Verification</h3>
+                <p style="color: var(--success); font-weight: 600;">Verified User</p>
+            </div>
+            <i class="fas fa-chevron-right menu-arrow"></i>
+        </div>
+    </div>
+
+    <div class="group-title">Security & Preferences</div>
+    <div class="settings-group">
+        <div class="menu-item">
+            <div class="menu-icon icon-purple"><i class="fas fa-lock"></i></div>
+            <div class="menu-content">
+                <h3>Privacy & Security</h3>
+                <p>Change Password, App Lock</p>
+            </div>
+            <i class="fas fa-chevron-right menu-arrow"></i>
+        </div>
+        <div class="menu-item">
+            <div class="menu-icon icon-gray"><i class="fas fa-bell"></i></div>
+            <div class="menu-content">
+                <h3>Notifications</h3>
+                <p>Order updates & offers</p>
+            </div>
+            <div class="toggle-switch"></div>
+        </div>
+    </div>
+
+    <div class="group-title">More</div>
+    <div class="settings-group">
+        <div class="menu-item">
+            <div class="menu-icon icon-orange"><i class="fas fa-headset"></i></div>
+            <div class="menu-content">
+                <h3>Help & Support</h3>
+                <p>Contact Mandla HQ</p>
+            </div>
+            <i class="fas fa-chevron-right menu-arrow"></i>
+        </div>
+        <div class="menu-item" onclick="confirmLogout()">
+            <div class="menu-icon icon-red"><i class="fas fa-sign-out-alt"></i></div>
+            <div class="menu-content">
+                <h3 style="color: var(--danger);">Log Out</h3>
+            </div>
+        </div>
+    </div>
+
+    <div style="height: 30px;"></div>
+
+    <nav class="bottom-nav-bar">
+        <a href="home_screen.html" class="nav-btn">
+            <i class="fas fa-home"></i><span>Home</span>
+        </a>
+        <a href="dashboard.html" class="nav-btn">
+            <i class="fas fa-file-alt"></i><span>Orders</span>
+        </a>
+        <a href="wallet.html" class="nav-btn">
+            <i class="fas fa-wallet"></i><span>Wallet</span>
+        </a>
+        <a href="#" class="nav-btn active">
+            <i class="fas fa-user"></i><span>Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        function confirmLogout() {
+            if(confirm("Are you sure you want to log out from Digital Sahayata?")) {
+                // Simulate logout and redirect to login page
+                window.location.href = "login.html";
+            }
+        }
+    </script>
+</body>
+</html>
