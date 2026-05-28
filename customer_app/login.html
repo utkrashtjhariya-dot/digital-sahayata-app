@@ -167,7 +167,7 @@
                 })
                 .catch((error) => {
                     console.error("Firebase Auth Error:", error);
-                    showMsg("System Error: Check Domain Auth or Phone Auth settings in Firebase.", "error");
+                    showMsg("Error: " + error.message, "error");
                     btn.innerHTML = 'Send Secure OTP <i class="fas fa-paper-plane"></i>';
                     btn.disabled = false;
                     window.recaptchaVerifier.reset();
