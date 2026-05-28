@@ -3,115 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Digital Sahayata | The 100 Crore Network</title>
+    <title>Digital Sahayata | India's Digital Hub</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --bg: #0f172a; --surface: #1e293b; --text-light: #f8fafc; --text-mute: #94a3b8;
-            --brand-blue: #3b82f6; --brand-green: #10b981; --brand-orange: #f59e0b;
+            --bg: #ffffff; 
+            --surface: #f8fafc; 
+            --text-dark: #0f172a; 
+            --text-mute: #64748b;
+            --brand-blue: #2563eb; 
+            --brand-light: #eff6ff;
+            --border: #e2e8f0;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text-light); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+        body { background: var(--bg); color: var(--text-dark); overflow-x: hidden; }
 
-        /* Navigation */
-        nav { padding: 25px 5vw; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10; }
-        .logo { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
-        .logo i { color: var(--brand-blue); }
-        .admin-link { color: var(--text-mute); text-decoration: none; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; transition: 0.3s; }
-        .admin-link:hover { color: var(--brand-orange); border-color: var(--brand-orange); }
+        /* Top Navigation Bar */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 5%; background: var(--bg);
+            border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-size: 1.5rem; font-weight: 900; color: var(--text-dark); display: flex; align-items: center; gap: 10px; text-decoration: none; letter-spacing: -0.5px; }
+        .logo i { color: var(--brand-blue); font-size: 1.8rem; }
+        
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-item { text-decoration: none; color: var(--text-mute); font-weight: 600; font-size: 0.95rem; transition: 0.2s; }
+        .nav-item:hover { color: var(--brand-blue); }
+        
+        .nav-actions { display: flex; gap: 15px; }
+        .btn-outline { padding: 10px 20px; border: 2px solid var(--border); border-radius: 8px; font-weight: 700; color: var(--text-dark); text-decoration: none; transition: 0.2s; }
+        .btn-outline:hover { border-color: var(--brand-blue); color: var(--brand-blue); }
+        .btn-primary { padding: 10px 24px; background: var(--brand-blue); color: white; border: none; border-radius: 8px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); transition: 0.2s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); }
 
         /* Hero Section */
-        .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 5vw; position: relative; }
-        
-        /* Background Glows */
-        .glow-1 { position: absolute; top: 10%; left: 20%; width: 300px; height: 300px; background: var(--brand-blue); border-radius: 50%; filter: blur(100px); opacity: 0.2; z-index: 0; }
-        .glow-2 { position: absolute; bottom: 10%; right: 20%; width: 300px; height: 300px; background: var(--brand-green); border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: 0; }
-
-        .hero-content { position: relative; z-index: 1; max-width: 800px; }
-        .badge { background: rgba(59, 130, 246, 0.1); color: var(--brand-blue); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 25px; border: 1px solid rgba(59, 130, 246, 0.2); }
-        .hero h1 { font-size: 3.5rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
-        .hero h1 span { background: -webkit-linear-gradient(45deg, #3b82f6, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { font-size: 1.2rem; color: var(--text-mute); margin-bottom: 40px; font-weight: 500; }
-
-        /* Portals Selection */
-        .portals { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 900px; position: relative; z-index: 1; }
-        
-        .portal-card {
-            background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.05); border-radius: 24px;
-            padding: 40px 30px; flex: 1; min-width: 300px; text-align: left;
-            transition: 0.3s; cursor: pointer; text-decoration: none; color: white;
-            display: flex; flex-direction: column;
+        .hero-section {
+            padding: 80px 5% 60px 5%; display: flex; align-items: center; justify-content: space-between; gap: 50px;
         }
-        .portal-card:hover { transform: translateY(-10px); border-color: rgba(255,255,255,0.2); }
+        .hero-content { flex: 1; max-width: 600px; }
+        .hero-badge { display: inline-block; padding: 8px 16px; background: var(--brand-light); color: var(--brand-blue); font-weight: 700; font-size: 0.85rem; border-radius: 20px; margin-bottom: 20px; }
+        .hero-content h1 { font-size: 3.5rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        .hero-content h1 span { color: var(--brand-blue); }
+        .hero-content p { font-size: 1.2rem; color: var(--text-mute); margin-bottom: 35px; line-height: 1.6; }
         
-        .p-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; margin-bottom: 25px; }
-        .customer-card:hover { box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2); }
-        .customer-card .p-icon { background: rgba(59, 130, 246, 0.1); color: var(--brand-blue); border: 1px solid rgba(59, 130, 246, 0.2); }
+        .hero-search { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 8px; max-width: 500px; }
+        .hero-search input { flex: 1; border: none; background: transparent; outline: none; padding: 10px 15px; font-size: 1rem; color: var(--text-dark); }
+        .hero-search button { background: var(--brand-blue); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+
+        /* Popular Services Grid (Square Colorful Icons) */
+        .services-section { padding: 40px 5% 80px 5%; background: var(--surface); border-top: 1px solid var(--border); }
+        .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
+        .section-header h2 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
+        .view-all { color: var(--brand-blue); font-weight: 700; text-decoration: none; }
+
+        .service-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
         
-        .partner-card:hover { box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2); }
-        .partner-card .p-icon { background: rgba(16, 185, 129, 0.1); color: var(--brand-green); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .service-card {
+            background: var(--bg); border: 1px solid var(--border); border-radius: 16px;
+            padding: 25px 20px; text-align: center; text-decoration: none; color: var(--text-dark);
+            transition: 0.3s; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            aspect-ratio: 1 / 1; /* Makes the card perfectly square */
+        }
+        .service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--brand-blue); }
+        
+        .s-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; margin-bottom: 15px; }
+        
+        /* Colorful Icon Backgrounds */
+        .ic-blue { background: #eff6ff; color: #2563eb; }
+        .ic-green { background: #ecfdf5; color: #10b981; }
+        .ic-orange { background: #fff7ed; color: #f97316; }
+        .ic-purple { background: #f5f3ff; color: #8b5cf6; }
+        .ic-red { background: #fef2f2; color: #ef4444; }
 
-        .portal-card h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; }
-        .portal-card p { color: var(--text-mute); font-size: 0.95rem; margin-bottom: 30px; flex: 1; }
-        .p-action { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
-        .customer-card .p-action { color: var(--brand-blue); }
-        .partner-card .p-action { color: var(--brand-green); }
-
-        /* Footer */
-        footer { padding: 30px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 10; margin-top: 50px; }
-        footer p { color: var(--text-mute); font-size: 0.85rem; }
+        .service-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 5px; }
+        .service-card p { font-size: 0.8rem; color: var(--text-mute); font-weight: 500; }
 
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .hero p { font-size: 1rem; }
-            .portals { flex-direction: column; }
+            .nav-links { display: none; }
+            .hero-section { flex-direction: column; text-align: center; padding-top: 40px; }
+            .hero-content h1 { font-size: 2.5rem; }
+            .service-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
 
-    <div class="glow-1"></div>
-    <div class="glow-2"></div>
-
-    <nav>
-        <div class="logo"><i class="fas fa-fingerprint"></i> Digital Sahayata</div>
-        <a href="admin_panel/dashboard.html" class="admin-link"><i class="fas fa-shield-alt"></i> HQ Login</a>
+    <nav class="navbar">
+        <a href="#" class="logo"><i class="fas fa-fingerprint"></i> Digital Sahayata</a>
+        <div class="nav-links">
+            <a href="#" class="nav-item">Services</a>
+            <a href="#" class="nav-item">Track Order</a>
+            <a href="partner_app/login.html" class="nav-item">Partner Network</a>
+        </div>
+        <div class="nav-actions">
+            <a href="customer_app/login.html" class="btn-outline">Login</a>
+            <a href="customer_app/login.html" class="btn-primary">Sign Up</a>
+        </div>
     </nav>
 
-    <div class="hero">
+    <section class="hero-section">
         <div class="hero-content">
-            <div class="badge">#1 Hyperlocal Service Network</div>
-            <h1>Mandla's Digital Hub.<br><span>Simplified.</span></h1>
-            <p>Connect with top-rated local digital centers, MP Online shops, and experts instantly. Secure, fast, and transparent.</p>
+            <div class="hero-badge">India's Largest Service Network</div>
+            <h1>Har Digital Kaam,<br><span>Ghar Baithe.</span></h1>
+            <p>From PAN cards to startup registrations, connect with verified experts instantly. Fast, secure, and 100% transparent.</p>
+            
+            <div class="hero-search">
+                <input type="text" placeholder="What service are you looking for? (e.g. Aadhaar)">
+                <button>Search</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="services-section">
+        <div class="section-header">
+            <h2>Popular Services</h2>
+            <a href="#" class="view-all">Explore All <i class="fas fa-arrow-right"></i></a>
         </div>
 
-        <div class="portals">
-            <!-- Customer Portal Entry -->
-            <a href="customer_app/login.html" class="portal-card customer-card">
-                <div class="p-icon"><i class="fas fa-user"></i></div>
-                <h2>For Customers</h2>
-                <p>Book services, track orders live, and manage your digital documents securely in one place.</p>
-                <div class="p-action">Enter Customer App <i class="fas fa-arrow-right"></i></div>
+        <div class="service-grid">
+            <a href="customer_app/booking.html" class="service-card">
+                <div class="s-icon ic-blue"><i class="fas fa-id-card"></i></div>
+                <h3>PAN Card</h3>
+                <p>New / Update</p>
+            </a>
+            
+            <a href="customer_app/booking.html" class="service-card">
+                <div class="s-icon ic-green"><i class="fas fa-fingerprint"></i></div>
+                <h3>Aadhaar</h3>
+                <p>Correction / Print</p>
             </a>
 
-            <!-- Partner Portal Entry -->
-            <a href="partner_app/login.html" class="portal-card partner-card">
-                <div class="p-icon"><i class="fas fa-store"></i></div>
-                <h2>For Partners</h2>
-                <p>Register your shop, receive unlimited local orders, and grow your business with instant payouts.</p>
-                <div class="p-action">Enter Partner Portal <i class="fas fa-arrow-right"></i></div>
+            <a href="customer_app/booking.html" class="service-card">
+                <div class="s-icon ic-orange"><i class="fas fa-file-invoice-dollar"></i></div>
+                <h3>Income Tax</h3>
+                <p>ITR Filing</p>
+            </a>
+
+            <a href="customer_app/booking.html" class="service-card">
+                <div class="s-icon ic-purple"><i class="fas fa-rocket"></i></div>
+                <h3>Startups</h3>
+                <p>Company Reg.</p>
+            </a>
+
+            <a href="customer_app/booking.html" class="service-card">
+                <div class="s-icon ic-red"><i class="fas fa-car"></i></div>
+                <h3>Driving License</h3>
+                <p>Apply / Renew</p>
             </a>
         </div>
-    </div>
-
-    <footer>
-        <p>&copy; 2026 Digital Sahayata Network. Designed for the 100 Crore Journey.</p>
-    </footer>
+    </section>
 
 </body>
 </html>
