@@ -1,198 +1,117 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Digital Sahayata | Premium</title>
-    <!-- Premium Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Digital Sahayata | The 100 Crore Network</title>
     
-    <!-- Firebase Engine -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        :root {
+            --bg: #0f172a; --surface: #1e293b; --text-light: #f8fafc; --text-mute: #94a3b8;
+            --brand-blue: #3b82f6; --brand-green: #10b981; --brand-orange: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text-light); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+
+        /* Navigation */
+        nav { padding: 25px 5vw; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10; }
+        .logo { font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
+        .logo i { color: var(--brand-blue); }
+        .admin-link { color: var(--text-mute); text-decoration: none; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; transition: 0.3s; }
+        .admin-link:hover { color: var(--brand-orange); border-color: var(--brand-orange); }
+
+        /* Hero Section */
+        .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 5vw; position: relative; }
         
-        body { 
-            background: #050505; 
-            background-image: radial-gradient(circle at top right, #1d4ed8 0%, transparent 40%), 
-                              radial-gradient(circle at bottom left, #7e22ce 0%, transparent 40%);
-            color: #ffffff; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 20px;
-        }
+        /* Background Glows */
+        .glow-1 { position: absolute; top: 10%; left: 20%; width: 300px; height: 300px; background: var(--brand-blue); border-radius: 50%; filter: blur(100px); opacity: 0.2; z-index: 0; }
+        .glow-2 { position: absolute; bottom: 10%; right: 20%; width: 300px; height: 300px; background: var(--brand-green); border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: 0; }
 
-        /* Top Navigation Bar */
-        .navbar {
-            width: 100%;
-            max-width: 450px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            margin-bottom: 30px;
-        }
+        .hero-content { position: relative; z-index: 1; max-width: 800px; }
+        .badge { background: rgba(59, 130, 246, 0.1); color: var(--brand-blue); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 25px; border: 1px solid rgba(59, 130, 246, 0.2); }
+        .hero h1 { font-size: 3.5rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
+        .hero h1 span { background: -webkit-linear-gradient(45deg, #3b82f6, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.2rem; color: var(--text-mute); margin-bottom: 40px; font-weight: 500; }
+
+        /* Portals Selection */
+        .portals { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 900px; position: relative; z-index: 1; }
         
-        .nav-logo { font-size: 1.5rem; font-weight: 700; background: linear-gradient(90deg, #60a5fa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .nav-profile { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
-
-        /* Premium Glass Card */
-        .glass-card {
-            background: rgba(20, 20, 20, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            padding: 35px 25px;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        .portal-card {
+            background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 24px;
+            padding: 40px 30px; flex: 1; min-width: 300px; text-align: left;
+            transition: 0.3s; cursor: pointer; text-decoration: none; color: white;
+            display: flex; flex-direction: column;
         }
-
-        .header-text { margin-bottom: 30px; }
-        .header-text h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
-        .header-text p { color: #9ca3af; font-size: 0.9rem; }
-
-        /* Modern Input Fields */
-        .input-group { margin-bottom: 20px; position: relative; }
-        .input-group i { position: absolute; left: 15px; top: 16px; color: #6b7280; }
+        .portal-card:hover { transform: translateY(-10px); border-color: rgba(255,255,255,0.2); }
         
-        input, select {
-            width: 100%;
-            padding: 15px 15px 15px 45px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #fff;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            appearance: none;
-        }
+        .p-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; margin-bottom: 25px; }
+        .customer-card:hover { box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2); }
+        .customer-card .p-icon { background: rgba(59, 130, 246, 0.1); color: var(--brand-blue); border: 1px solid rgba(59, 130, 246, 0.2); }
         
-        input:focus, select:focus {
-            outline: none;
-            border-color: #60a5fa;
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 15px rgba(96, 165, 250, 0.2);
+        .partner-card:hover { box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2); }
+        .partner-card .p-icon { background: rgba(16, 185, 129, 0.1); color: var(--brand-green); border: 1px solid rgba(16, 185, 129, 0.2); }
+
+        .portal-card h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; }
+        .portal-card p { color: var(--text-mute); font-size: 0.95rem; margin-bottom: 30px; flex: 1; }
+        .p-action { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+        .customer-card .p-action { color: var(--brand-blue); }
+        .partner-card .p-action { color: var(--brand-green); }
+
+        /* Footer */
+        footer { padding: 30px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 10; margin-top: 50px; }
+        footer p { color: var(--text-mute); font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1rem; }
+            .portals { flex-direction: column; }
         }
-
-        select option { background: #0f172a; color: white; }
-
-        /* Gradient Premium Button */
-        .premium-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 10px;
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-        }
-        
-        .premium-btn:active { transform: scale(0.96); }
-
-        #statusMsg { text-align: center; margin-top: 20px; font-size: 0.9rem; font-weight: 500; min-height: 20px; }
-        .success-text { color: #34d399; }
-        .error-text { color: #f87171; }
-        .loading-text { color: #60a5fa; }
     </style>
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="nav-logo"><i class="fas fa-bolt"></i> Sahayata</div>
-        <div class="nav-profile"><i class="fas fa-user"></i></div>
+    <div class="glow-1"></div>
+    <div class="glow-2"></div>
+
+    <nav>
+        <div class="logo"><i class="fas fa-fingerprint"></i> Digital Sahayata</div>
+        <a href="admin_panel/dashboard.html" class="admin-link"><i class="fas fa-shield-alt"></i> HQ Login</a>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <div class="badge">#1 Hyperlocal Service Network</div>
+            <h1>Mandla's Digital Hub.<br><span>Simplified.</span></h1>
+            <p>Connect with top-rated local digital centers, MP Online shops, and experts instantly. Secure, fast, and transparent.</p>
+        </div>
+
+        <div class="portals">
+            <!-- Customer Portal Entry -->
+            <a href="customer_app/login.html" class="portal-card customer-card">
+                <div class="p-icon"><i class="fas fa-user"></i></div>
+                <h2>For Customers</h2>
+                <p>Book services, track orders live, and manage your digital documents securely in one place.</p>
+                <div class="p-action">Enter Customer App <i class="fas fa-arrow-right"></i></div>
+            </a>
+
+            <!-- Partner Portal Entry -->
+            <a href="partner_app/login.html" class="portal-card partner-card">
+                <div class="p-icon"><i class="fas fa-store"></i></div>
+                <h2>For Partners</h2>
+                <p>Register your shop, receive unlimited local orders, and grow your business with instant payouts.</p>
+                <div class="p-action">Enter Partner Portal <i class="fas fa-arrow-right"></i></div>
+            </a>
+        </div>
     </div>
 
-    <div class="glass-card">
-        <div class="header-text">
-            <h2>New Request</h2>
-            <p>Fast, Secure & Professional Services</p>
-        </div>
+    <footer>
+        <p>&copy; 2026 Digital Sahayata Network. Designed for the 100 Crore Journey.</p>
+    </footer>
 
-        <div class="input-group">
-            <i class="fas fa-user-circle"></i>
-            <input type="text" id="custName" placeholder="Full Name" required autocomplete="off">
-        </div>
-
-        <div class="input-group">
-            <i class="fas fa-phone-alt"></i>
-            <input type="tel" id="custPhone" placeholder="WhatsApp Number" required autocomplete="off">
-        </div>
-        
-        <div class="input-group">
-            <i class="fas fa-briefcase"></i>
-            <select id="serviceType">
-                <option value="" disabled selected>Select a Service...</option>
-                <option value="Aadhaar/PAN Update">Aadhaar/PAN Update</option>
-                <option value="Startup/MSME Reg">Startup / MSME Registration</option>
-                <option value="Creative Design Task">Creative Design Task</option>
-                <option value="Legal Consulting">Legal & Financial Consulting</option>
-            </select>
-        </div>
-        
-        <button class="premium-btn" onclick="launchToDatabase()">Submit Request <i class="fas fa-arrow-right" style="margin-left:8px;"></i></button>
-        <div id="statusMsg"></div>
-    </div>
-
-    <script>
-        // Aapki Secret Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyBmdEmqUiIP0hr_Ixfu6s83KBJfeTHgFkw",
-            authDomain: "digital-sahayata-f3ede.firebaseapp.com",
-            projectId: "digital-sahayata-f3ede",
-            storageBucket: "digital-sahayata-f3ede.firebasestorage.app",
-            messagingSenderId: "532380574288",
-            appId: "1:532380574288:web:f306370320e448f09b6755",
-            measurementId: "G-DQDZ3WFKP5"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        function launchToDatabase() {
-            const name = document.getElementById('custName').value;
-            const phone = document.getElementById('custPhone').value;
-            const service = document.getElementById('serviceType').value;
-            const statusDiv = document.getElementById('statusMsg');
-
-            if(!name || !phone || !service) {
-                statusDiv.innerHTML = "<span class='error-text'><i class='fas fa-exclamation-circle'></i> Please fill all fields correctly.</span>";
-                return;
-            }
-
-            statusDiv.innerHTML = "<span class='loading-text'><i class='fas fa-circle-notch fa-spin'></i> Securing your request...</span>";
-
-            db.collection("Orders").add({
-                customerName: name,
-                customerPhone: phone,
-                serviceName: service,
-                status: "Pending Assignment",
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then((docRef) => {
-                statusDiv.innerHTML = "<span class='success-text'><i class='fas fa-check-circle'></i> Request submitted successfully!</span>";
-                setTimeout(() => {
-                    document.getElementById('custName').value = '';
-                    document.getElementById('custPhone').value = '';
-                    document.getElementById('serviceType').value = '';
-                    statusDiv.innerHTML = "";
-                }, 3000);
-            })
-            .catch((error) => {
-                statusDiv.innerHTML = "<span class='error-text'><i class='fas fa-times-circle'></i> Connection failed. Try again.</span>";
-            });
-        }
-    </script>
 </body>
 </html>
