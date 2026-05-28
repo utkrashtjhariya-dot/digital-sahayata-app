@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Partner Portal | Digital Sahayata</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #f0fdf4; /* Light Green Tint */
+            --surface: #ffffff; 
+            --text-dark: #1f2937; 
+            --text-mute: #6b7280;
+            --brand-green: #166534; 
+            --brand-light: #22c55e;
+            --border: #d1d5db;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* Top Business Banner */
+        .partner-header {
+            background: var(--brand-green);
+            padding: 40px 25px 30px 25px;
+            padding-top: calc(40px + env(safe-area-inset-top));
+            color: white;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 20px rgba(22, 101, 52, 0.2);
+        }
+        .partner-logo {
+            width: 60px; height: 60px; background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 16px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.8rem; margin-bottom: 20px;
+        }
+        .partner-header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; }
+        .partner-header p { font-size: 0.9rem; opacity: 0.9; }
+
+        /* Business Form */
+        .form-container { padding: 30px 25px; flex: 1; margin-top: -10px; }
+        
+        .tab-container {
+            display: flex; background: var(--border); border-radius: 12px;
+            padding: 5px; margin-bottom: 25px;
+        }
+        .tab {
+            flex: 1; text-align: center; padding: 12px; font-weight: 700;
+            font-size: 0.9rem; color: var(--text-mute); cursor: pointer;
+            border-radius: 8px; transition: 0.3s;
+        }
+        .tab.active { background: var(--surface); color: var(--brand-green); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-dark); }
+        .input-field {
+            width: 100%; padding: 16px; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 12px;
+            font-size: 1rem; color: var(--text-dark); outline: none; transition: 0.3s;
+        }
+        .input-field:focus { border-color: var(--brand-green); box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2); }
+
+        /* File Upload Box (For Shop Docs) */
+        .upload-box {
+            border: 2px dashed var(--brand-light); background: #f0fdf4;
+            padding: 20px; border-radius: 12px; text-align: center;
+            color: var(--brand-green); font-weight: 600; font-size: 0.9rem;
+            margin-bottom: 20px; cursor: pointer;
+        }
+        .upload-box i { font-size: 1.5rem; margin-bottom: 8px; display: block; }
+
+        .btn-business {
+            width: 100%; padding: 18px; background: var(--brand-green); color: white;
+            border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700;
+            cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px;
+            box-shadow: 0 10px 20px rgba(22, 101, 52, 0.2);
+        }
+        .btn-business:active { transform: scale(0.98); }
+
+        /* Dynamic Views */
+        #loginView { display: block; animation: fadeIn 0.3s ease; }
+        #registerView { display: none; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        #statusMsg { text-align: center; margin-top: 15px; font-weight: 600; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <div class="partner-header">
+        <div class="partner-logo"><i class="fas fa-handshake"></i></div>
+        <h1>Partner Portal</h1>
+        <p>Grow your local business with the Mandla Hub Network.</p>
+    </div>
+
+    <div class="form-container">
+        
+        <div class="tab-container">
+            <div class="tab active" id="tabLogin" onclick="switchView('login')">Login</div>
+            <div class="tab" id="tabRegister" onclick="switchView('register')">Register Business</div>
+        </div>
+
+        <div id="loginView">
+            <div class="input-group">
+                <label>Partner ID or Email</label>
+                <input type="text" class="input-field" placeholder="E.g. PRT-1002" id="loginId">
+            </div>
+            <div class="input-group">
+                <label>Secure Password</label>
+                <input type="password" class="input-field" placeholder="••••••••" id="loginPass">
+            </div>
+            <button class="btn-business" onclick="processPartner('login')">Access Dashboard <i class="fas fa-sign-in-alt"></i></button>
+        </div>
+
+        <div id="registerView">
+            <div class="input-group">
+                <label>Business / Shop Name</label>
+                <input type="text" class="input-field" placeholder="E.g. CSC Digital Center">
+            </div>
+            <div class="input-group">
+                <label>Owner Name</label>
+                <input type="text" class="input-field" placeholder="Legal Name">
+            </div>
+            <div class="input-group">
+                <label>Phone Number (WhatsApp)</label>
+                <input type="tel" class="input-field" placeholder="+91">
+            </div>
+            
+            <div class="upload-box">
+                <i class="fas fa-cloud-upload-alt"></i>
+                Upload Shop Photo or Aadhaar
+                <div style="font-size: 0.75rem; color: var(--text-mute); margin-top: 5px;">(Required for verification)</div>
+            </div>
+
+            <button class="btn-business" onclick="processPartner('register')">Submit Application <i class="fas fa-arrow-right"></i></button>
+        </div>
+
+        <div id="statusMsg"></div>
+    </div>
+
+    <script>
+        function switchView(view) {
+            if(view === 'login') {
+                document.getElementById('loginView').style.display = 'block';
+                document.getElementById('registerView').style.display = 'none';
+                document.getElementById('tabLogin').classList.add('active');
+                document.getElementById('tabRegister').classList.remove('active');
+            } else {
+                document.getElementById('loginView').style.display = 'none';
+                document.getElementById('registerView').style.display = 'block';
+                document.getElementById('tabRegister').classList.add('active');
+                document.getElementById('tabLogin').classList.remove('active');
+            }
+            document.getElementById('statusMsg').innerHTML = '';
+        }
+
+        function processPartner(action) {
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            const msgBox = document.getElementById('statusMsg');
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            btn.style.opacity = '0.8';
+
+            setTimeout(() => {
+                btn.style.opacity = '1';
+                if(action === 'login') {
+                    btn.style.background = '#22c55e';
+                    btn.innerHTML = 'Verified <i class="fas fa-check"></i>';
+                    setTimeout(() => window.location.href = "dashboard.html", 1000);
+                } else {
+                    btn.style.background = '#22c55e';
+                    btn.innerHTML = 'Application Sent <i class="fas fa-check"></i>';
+                    msgBox.innerHTML = '<span style="color:#166534;">Your application is sent to AdminHQ for approval. We will contact you soon.</span>';
+                }
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
