@@ -5,163 +5,207 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Secure Login | Digital Sahayata</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 
     <style>
         :root {
-            --bg: #ffffff; --surface: #f8fafc; --text-dark: #0f172a; --text-mute: #64748b;
-            --brand: #2563eb; --brand-glow: rgba(37, 99, 235, 0.2); --border: #e2e8f0;
+            --bg: #f8fafc; --surface: #ffffff; --text-dark: #0f172a; --text-mute: #64748b;
+            --brand-blue: #2563eb; --brand-light: #eff6ff; --border: #e2e8f0; --success: #10b981;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
 
-        /* Top Branding */
-        .auth-header {
-            padding: 40px 25px 20px 25px;
-            padding-top: calc(40px + env(safe-area-inset-top));
-            text-align: center;
+        .auth-container {
+            background: var(--surface); width: 100%; max-width: 450px;
+            border-radius: 24px; padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            border: 1px solid var(--border); text-align: center;
         }
-        .logo-box {
-            width: 70px; height: 70px; background: var(--surface); border: 1px solid var(--border);
-            border-radius: 20px; display: flex; justify-content: center; align-items: center;
-            font-size: 2rem; color: var(--brand); margin: 0 auto 20px auto;
-            box-shadow: 0 10px 25px var(--brand-glow);
-        }
-        .auth-header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
-        .auth-header p { color: var(--text-mute); font-size: 0.95rem; font-weight: 500; }
 
-        /* Form Section */
-        .auth-form { padding: 30px 25px; flex: 1; }
+        .auth-header i { font-size: 3rem; color: var(--brand-blue); margin-bottom: 20px; }
+        .auth-header h1 { font-size: 1.8rem; font-weight: 800; color: var(--text-dark); margin-bottom: 10px; letter-spacing: -0.5px; }
+        .auth-header p { color: var(--text-mute); font-size: 0.95rem; margin-bottom: 30px; line-height: 1.5; }
+
+        .input-group { margin-bottom: 20px; text-align: left; position: relative; }
+        .input-group label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
         
-        .input-group { margin-bottom: 20px; position: relative; }
-        .input-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
-        .input-icon { position: absolute; left: 18px; top: 38px; color: var(--text-mute); font-size: 1.1rem; }
+        .phone-input-wrapper { display: flex; align-items: center; border: 2px solid var(--border); border-radius: 12px; overflow: hidden; transition: 0.2s; background: var(--bg); }
+        .phone-input-wrapper:focus-within { border-color: var(--brand-blue); background: var(--surface); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+        .country-code { padding: 15px; font-weight: 700; color: var(--text-dark); background: var(--border); border-right: 1px solid var(--border); }
         
-        .input-field {
-            width: 100%; padding: 16px 16px 16px 45px;
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 14px; font-size: 1rem; color: var(--text-dark);
-            outline: none; transition: 0.3s;
+        .input-group input {
+            width: 100%; padding: 15px; border: none; outline: none;
+            font-size: 1.1rem; font-weight: 600; color: var(--text-dark); background: transparent;
         }
-        .input-field:focus { border-color: var(--brand); box-shadow: 0 0 0 4px var(--brand-glow); background: var(--bg); }
 
-        .forgot-pass { display: block; text-align: right; color: var(--brand); font-size: 0.85rem; font-weight: 600; text-decoration: none; margin-top: -10px; margin-bottom: 25px; }
-
-        .btn-auth {
-            width: 100%; padding: 18px; background: var(--brand); color: white;
-            border: none; border-radius: 14px; font-size: 1.1rem; font-weight: 700;
+        .btn-primary {
+            width: 100%; padding: 16px; background: var(--brand-blue); color: white;
+            border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 800;
             cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px;
-            box-shadow: 0 10px 20px var(--brand-glow);
         }
-        .btn-auth:active { transform: scale(0.98); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,99,235,0.25); }
+        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* Toggle Login/Signup */
-        .auth-toggle { text-align: center; margin-top: 30px; font-size: 0.9rem; color: var(--text-mute); font-weight: 500; }
-        .auth-toggle span { color: var(--brand); font-weight: 700; cursor: pointer; }
+        #recaptcha-container { margin: 20px 0; display: flex; justify-content: center; }
 
-        /* Status Message */
-        #authMsg { text-align: center; margin-top: 15px; font-size: 0.9rem; font-weight: 600; min-height: 20px; }
-        .msg-error { color: #ef4444; }
-        .msg-success { color: #10b981; }
-
-        /* Hide specific elements based on mode */
-        .signup-only { display: none; }
-        body.signup-mode .signup-only { display: block; }
-        body.signup-mode .login-only { display: none; }
+        /* OTP Section Hidden by Default */
+        #otp-section { display: none; }
+        
+        .status-msg { margin-top: 15px; font-size: 0.85rem; font-weight: 600; }
+        .error-msg { color: #ef4444; }
+        .success-msg { color: var(--success); }
     </style>
 </head>
 <body>
 
-    <div class="auth-header">
-        <div class="logo-box"><i class="fas fa-fingerprint"></i></div>
-        <h1 id="pageTitle">Welcome Back</h1>
-        <p id="pageDesc">Secure login to your Mandla Hub account.</p>
-    </div>
-
-    <div class="auth-form">
-        <div class="input-group signup-only">
-            <label>Full Name</label>
-            <i class="fas fa-user input-icon"></i>
-            <input type="text" id="userName" class="input-field" placeholder="Enter your full name">
+    <div class="auth-container">
+        <div class="auth-header">
+            <i class="fas fa-shield-alt"></i>
+            <h1>Secure Login</h1>
+            <p>Enter your mobile number to access India's largest service network.</p>
         </div>
 
-        <div class="input-group">
-            <label>Email Address</label>
-            <i class="fas fa-envelope input-icon"></i>
-            <input type="email" id="userEmail" class="input-field" placeholder="name@example.com">
+        <div id="phone-section">
+            <div class="input-group">
+                <label>Mobile Number</label>
+                <div class="phone-input-wrapper">
+                    <span class="country-code">+91</span>
+                    <input type="tel" id="phoneNumber" placeholder="Enter 10 digit number" maxlength="10" autocomplete="off">
+                </div>
+            </div>
+            
+            <div id="recaptcha-container"></div>
+            
+            <button class="btn-primary" id="sendOtpBtn" onclick="sendOTP()">
+                Send Secure OTP <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
 
-        <div class="input-group">
-            <label>Password</label>
-            <i class="fas fa-lock input-icon"></i>
-            <input type="password" id="userPass" class="input-field" placeholder="••••••••">
+        <div id="otp-section">
+            <div class="input-group">
+                <label>Enter 6-Digit OTP</label>
+                <div class="phone-input-wrapper" style="padding-left: 15px;">
+                    <input type="number" id="otpCode" placeholder="• • • • • •" maxlength="6" autocomplete="off" style="letter-spacing: 10px; text-align: center;">
+                </div>
+            </div>
+            
+            <button class="btn-primary" id="verifyOtpBtn" onclick="verifyOTP()" style="background: var(--success);">
+                Verify & Login <i class="fas fa-check-circle"></i>
+            </button>
+            <button onclick="window.location.reload()" style="background: transparent; border: none; color: var(--brand-blue); font-weight: 700; margin-top: 20px; cursor: pointer;">Change Number</button>
         </div>
 
-        <a href="#" class="forgot-pass login-only">Forgot Password?</a>
-
-        <button class="btn-auth" id="actionBtn" onclick="processAuth()">Login <i class="fas fa-arrow-right"></i></button>
-        
-        <div id="authMsg"></div>
-
-        <div class="auth-toggle login-only">
-            New to Digital Sahayata? <span onclick="toggleMode()">Create Account</span>
-        </div>
-        <div class="auth-toggle signup-only">
-            Already have an account? <span onclick="toggleMode()">Login Here</span>
-        </div>
+        <div id="system-msg" class="status-msg"></div>
     </div>
 
     <script>
-        let isSignupMode = false;
+        // NOTE FOR CEO: This is a placeholder Firebase config. 
+        // In the next module, we will generate your REAL API keys from the Google Cloud Console.
+        const firebaseConfig = {
+            apiKey: "AIzaSy_YOUR_REAL_API_KEY_HERE_xxxxxxxxxxx",
+            authDomain: "digitalsahayata-app.firebaseapp.com",
+            projectId: "digitalsahayata-app",
+            storageBucket: "digitalsahayata-app.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef123456"
+        };
 
-        function toggleMode() {
-            isSignupMode = !isSignupMode;
-            if(isSignupMode) {
-                document.body.classList.add('signup-mode');
-                document.getElementById('pageTitle').innerText = "Create Account";
-                document.getElementById('pageDesc').innerText = "Join the 100 Crore Network today.";
-                document.getElementById('actionBtn').innerHTML = 'Sign Up <i class="fas fa-user-plus"></i>';
-            } else {
-                document.body.classList.remove('signup-mode');
-                document.getElementById('pageTitle').innerText = "Welcome Back";
-                document.getElementById('pageDesc').innerText = "Secure login to your Mandla Hub account.";
-                document.getElementById('actionBtn').innerHTML = 'Login <i class="fas fa-arrow-right"></i>';
-            }
-            document.getElementById('authMsg').innerHTML = "";
+        // Initialize Firebase Backend
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        auth.useDeviceLanguage(); // Automatically sets SMS language based on device
+
+        let confirmationResultObj = null;
+
+        // Initialize Invisible reCAPTCHA
+        window.onload = function() {
+            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                'size': 'normal',
+                'callback': (response) => {
+                    // reCAPTCHA solved, allow sending OTP
+                    document.getElementById('sendOtpBtn').disabled = false;
+                }
+            });
+            window.recaptchaVerifier.render();
+        };
+
+        function showMsg(text, type) {
+            const msgBox = document.getElementById('system-msg');
+            msgBox.textContent = text;
+            msgBox.className = 'status-msg ' + (type === 'error' ? 'error-msg' : 'success-msg');
         }
 
-        function processAuth() {
-            const email = document.getElementById('userEmail').value.trim();
-            const pass = document.getElementById('userPass').value.trim();
-            const msgDiv = document.getElementById('authMsg');
-            const btn = document.getElementById('actionBtn');
-
-            if(!email || !pass) {
-                msgDiv.innerHTML = '<span class="msg-error"><i class="fas fa-exclamation-circle"></i> Please fill all fields.</span>';
+        // ENGINE: Send OTP Function
+        function sendOTP() {
+            const phoneVal = document.getElementById('phoneNumber').value;
+            if(phoneVal.length !== 10) {
+                showMsg("Invalid Format! Please enter a valid 10-digit Indian number.", "error");
                 return;
             }
 
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            btn.style.opacity = '0.8';
+            const fullNumber = "+91" + phoneVal;
+            const btn = document.getElementById('sendOtpBtn');
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processing...';
+            btn.disabled = true;
 
-            // Simulation of Auth Logic (Will connect to Firebase Auth in next step)
-            setTimeout(() => {
-                msgDiv.innerHTML = '<span class="msg-success"><i class="fas fa-check-circle"></i> Authentication Successful!</span>';
-                btn.style.background = '#10b981';
-                btn.innerHTML = 'Secured <i class="fas fa-shield-alt"></i>';
-                
-                // Redirect to Home Screen after login
-                setTimeout(() => {
-                    window.location.href = "home_screen.html";
-                }, 1500);
-            }, 1500);
+            const appVerifier = window.recaptchaVerifier;
+
+            // This triggers the real SMS via Google's servers
+            auth.signInWithPhoneNumber(fullNumber, appVerifier)
+                .then((confirmationResult) => {
+                    window.confirmationResultObj = confirmationResult;
+                    
+                    // UI Switch
+                    document.getElementById('phone-section').style.display = 'none';
+                    document.getElementById('otp-section').style.display = 'block';
+                    showMsg("OTP Sent successfully to " + fullNumber, "success");
+                })
+                .catch((error) => {
+                    console.error("Firebase Auth Error:", error);
+                    showMsg("System Error: Check API Keys or Network.", "error");
+                    btn.innerHTML = 'Send Secure OTP <i class="fas fa-paper-plane"></i>';
+                    btn.disabled = false;
+                    window.recaptchaVerifier.reset();
+                });
+        }
+
+        // ENGINE: Verify OTP Function
+        function verifyOTP() {
+            const otpVal = document.getElementById('otpCode').value;
+            if(otpVal.length !== 6) {
+                showMsg("Enter the exact 6-digit OTP received.", "error");
+                return;
+            }
+
+            const btn = document.getElementById('verifyOtpBtn');
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Verifying...';
+            btn.disabled = true;
+
+            window.confirmationResultObj.confirm(otpVal)
+                .then((result) => {
+                    const user = result.user;
+                    console.log("Authentication 100% Successful. User UID:", user.uid);
+                    showMsg("Login Successful! Redirecting to Dashboard...", "success");
+                    
+                    // Secure Session Created. Redirecting...
+                    setTimeout(() => {
+                        window.location.href = "home_screen.html";
+                    }, 1500);
+                })
+                .catch((error) => {
+                    console.error("OTP Verification Error:", error);
+                    showMsg("Invalid or Expired OTP. Try again.", "error");
+                    btn.innerHTML = 'Verify & Login <i class="fas fa-check-circle"></i>';
+                    btn.disabled = false;
+                });
         }
     </script>
 </body>
 </html>
-
