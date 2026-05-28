@@ -104,23 +104,23 @@
     </div>
 
     <script>
-        // NOTE FOR CEO: This is a placeholder Firebase config. 
-        // In the next module, we will generate your REAL API keys from the Google Cloud Console.
+        // AAPKI ASLI FIREBASE CONFIGURATION
         const firebaseConfig = {
-            apiKey: "AIzaSy_YOUR_REAL_API_KEY_HERE_xxxxxxxxxxx",
-            authDomain: "digitalsahayata-app.firebaseapp.com",
-            projectId: "digitalsahayata-app",
-            storageBucket: "digitalsahayata-app.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef123456"
+            apiKey: "AIzaSyBmdEmqUIiP0hr_Ixfu6s83KBJfeTHgFkw",
+            authDomain: "digital-sahayata-f3ede.firebaseapp.com",
+            projectId: "digital-sahayata-f3ede",
+            storageBucket: "digital-sahayata-f3ede.firebasestorage.app",
+            messagingSenderId: "532380574288",
+            appId: "1:532380574288:web:f306370320e448f09b6755",
+            measurementId: "G-DQDZ3WFKP5"
         };
 
-        // Initialize Firebase Backend
+        // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const auth = firebase.auth();
-        auth.useDeviceLanguage(); // Automatically sets SMS language based on device
+        auth.useDeviceLanguage(); 
 
         let confirmationResultObj = null;
 
@@ -129,7 +129,6 @@
             window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
                 'size': 'normal',
                 'callback': (response) => {
-                    // reCAPTCHA solved, allow sending OTP
                     document.getElementById('sendOtpBtn').disabled = false;
                 }
             });
@@ -157,19 +156,18 @@
 
             const appVerifier = window.recaptchaVerifier;
 
-            // This triggers the real SMS via Google's servers
+            // REAL SMS TRIGGER
             auth.signInWithPhoneNumber(fullNumber, appVerifier)
                 .then((confirmationResult) => {
                     window.confirmationResultObj = confirmationResult;
                     
-                    // UI Switch
                     document.getElementById('phone-section').style.display = 'none';
                     document.getElementById('otp-section').style.display = 'block';
                     showMsg("OTP Sent successfully to " + fullNumber, "success");
                 })
                 .catch((error) => {
                     console.error("Firebase Auth Error:", error);
-                    showMsg("System Error: Check API Keys or Network.", "error");
+                    showMsg("System Error: Check Domain Auth or Phone Auth settings in Firebase.", "error");
                     btn.innerHTML = 'Send Secure OTP <i class="fas fa-paper-plane"></i>';
                     btn.disabled = false;
                     window.recaptchaVerifier.reset();
@@ -191,17 +189,16 @@
             window.confirmationResultObj.confirm(otpVal)
                 .then((result) => {
                     const user = result.user;
-                    console.log("Authentication 100% Successful. User UID:", user.uid);
-                    showMsg("Login Successful! Redirecting to Dashboard...", "success");
+                    console.log("Authentication Successful. UID:", user.uid);
+                    showMsg("Login Successful! Redirecting...", "success");
                     
-                    // Secure Session Created. Redirecting...
                     setTimeout(() => {
                         window.location.href = "home_screen.html";
                     }, 1500);
                 })
                 .catch((error) => {
                     console.error("OTP Verification Error:", error);
-                    showMsg("Invalid or Expired OTP. Try again.", "error");
+                    showMsg("Invalid OTP. Try again.", "error");
                     btn.innerHTML = 'Verify & Login <i class="fas fa-check-circle"></i>';
                     btn.disabled = false;
                 });
