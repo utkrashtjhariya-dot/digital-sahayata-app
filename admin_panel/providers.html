@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Network Control | Admin HQ</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #f1f5f9; --surface: #ffffff; --text-dark: #0f172a; --text-mute: #64748b;
+            --admin-theme: #d97706; /* Blueprint Orange */
+            --admin-sidebar: #1e293b; --sidebar-text: #cbd5e1;
+            --border: #e2e8f0; --success: #10b981; --danger: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text-dark); display: flex; min-height: 100vh; }
+
+        /* Sidebar HQ (Same as Dashboard for consistency) */
+        .sidebar { background: var(--admin-sidebar); width: 260px; display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; z-index: 100; }
+        .sidebar-brand { padding: 25px 20px; font-size: 1.2rem; font-weight: 800; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+        .nav-links { padding: 20px 0; flex: 1; }
+        .nav-item { padding: 15px 25px; color: var(--sidebar-text); text-decoration: none; display: flex; align-items: center; gap: 15px; font-weight: 500; transition: 0.2s; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.05); color: var(--admin-theme); border-left: 4px solid var(--admin-theme); }
+        .nav-item i { font-size: 1.2rem; width: 20px; }
+
+        /* Main Workspace */
+        .main-content { flex: 1; margin-left: 260px; padding: 30px; display: flex; flex-direction: column; }
+        
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .top-header h1 { font-size: 1.5rem; font-weight: 800; }
+        
+        /* Stats Ribbon */
+        .stats-ribbon { display: flex; gap: 20px; margin-bottom: 30px; }
+        .stat-box { background: var(--surface); padding: 20px; border-radius: 12px; border: 1px solid var(--border); flex: 1; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .stat-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; }
+        .stat-info h4 { font-size: 0.85rem; color: var(--text-mute); text-transform: uppercase; margin-bottom: 5px; }
+        .stat-info h2 { font-size: 1.6rem; font-weight: 800; }
+
+        /* Provider Table Section */
+        .table-container { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .table-header { padding: 20px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .table-header h3 { font-size: 1.1rem; font-weight: 700; }
+        
+        .filter-tabs { display: flex; gap: 10px; }
+        .filter-btn { padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-mute); }
+        .filter-btn.active { background: var(--admin-theme); color: white; border-color: var(--admin-theme); }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background: #f8fafc; color: var(--text-mute); font-size: 0.85rem; font-weight: 600; padding: 15px 25px; text-transform: uppercase; }
+        td { padding: 20px 25px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        
+        .provider-cell { display: flex; align-items: center; gap: 15px; }
+        .provider-logo { width: 40px; height: 40px; border-radius: 8px; background: #e2e8f0; display: flex; justify-content: center; align-items: center; color: var(--text-mute); }
+        .provider-name { font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
+        .provider-id { font-size: 0.75rem; color: var(--text-mute); font-family: monospace; }
+
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-active { background: #dcfce7; color: var(--success); }
+
+        .action-btns { display: flex; gap: 10px; }
+        .btn-action { width: 35px; height: 35px; border-radius: 8px; border: none; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .btn-approve { background: #ecfdf5; color: var(--success); }
+        .btn-approve:hover { background: var(--success); color: white; }
+        .btn-reject { background: #fef2f2; color: var(--danger); }
+        .btn-reject:hover { background: var(--danger); color: white; }
+        .btn-view { background: #eff6ff; color: #2563eb; }
+
+        /* Document Modal (Hidden by default) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--surface); width: 500px; border-radius: 16px; padding: 25px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h3 { font-size: 1.2rem; font-weight: 800; }
+        .close-modal { cursor: pointer; color: var(--text-mute); font-size: 1.2rem; }
+        .doc-preview { width: 100%; height: 200px; background: #e2e8f0; border-radius: 8px; display: flex; justify-content: center; align-items: center; color: var(--text-mute); margin-bottom: 20px; }
+        
+        @media (max-width: 1024px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; padding: 15px; }
+            .stats-ribbon { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand"><i class="fas fa-fingerprint" style="color: var(--admin-theme);"></i> Mandla HQ</div>
+        <div class="nav-links">
+            <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="#" class="nav-item"><i class="fas fa-list-alt"></i> Total Orders</a>
+            <a href="#" class="nav-item active"><i class="fas fa-store"></i> Providers</a>
+            <a href="#" class="nav-item"><i class="fas fa-users"></i> Customers</a>
+            <a href="#" class="nav-item"><i class="fas fa-chart-line"></i> Earnings</a>
+            <a href="#" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-header">
+            <h1>Network Control</h1>
+            <button class="filter-btn" style="background: var(--admin-theme); color: white;"><i class="fas fa-plus"></i> Add Partner Manually</button>
+        </div>
+
+        <div class="stats-ribbon">
+            <div class="stat-box">
+                <div class="stat-icon" style="background: #ecfdf5; color: var(--success);"><i class="fas fa-store-alt"></i></div>
+                <div class="stat-info">
+                    <h4>Active Providers</h4>
+                    <h2>156</h2>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon" style="background: #fef3c7; color: #d97706;"><i class="fas fa-clock"></i></div>
+                <div class="stat-info">
+                    <h4>Pending Verification</h4>
+                    <h2>12</h2>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon" style="background: #fef2f2; color: var(--danger);"><i class="fas fa-ban"></i></div>
+                <div class="stat-info">
+                    <h4>Rejected/Blocked</h4>
+                    <h2>3</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-header">
+                <h3>Partner Directory</h3>
+                <div class="filter-tabs">
+                    <button class="filter-btn">All</button>
+                    <button class="filter-btn active">Pending (12)</button>
+                    <button class="filter-btn">Active</button>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Provider Details</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Pending Application -->
+                    <tr id="row1">
+                        <td>
+                            <div class="provider-cell">
+                                <div class="provider-logo"><i class="fas fa-laptop-house"></i></div>
+                                <div>
+                                    <div class="provider-name">Raju Digital Point</div>
+                                    <div class="provider-id">APP-9021 • Raju Sharma</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Bamhani Banjar</td>
+                        <td><span class="status-badge status-pending" id="status1">Awaiting Review</span></td>
+                        <td>
+                            <div class="action-btns" id="actions1">
+                                <button class="btn-action btn-view" onclick="viewDocs()" title="View Document"><i class="fas fa-file-alt"></i></button>
+                                <button class="btn-action btn-approve" onclick="approvePartner('row1', 'status1', 'actions1')" title="Approve"><i class="fas fa-check"></i></button>
+                                <button class="btn-action btn-reject" title="Reject"><i class="fas fa-times"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Active Partner -->
+                    <tr>
+                        <td>
+                            <div class="provider-cell">
+                                <div class="provider-logo" style="background: #dcfce7; color: #166534;"><i class="fas fa-store"></i></div>
+                                <div>
+                                    <div class="provider-name">MP Online Center Katra</div>
+                                    <div class="provider-id">PRT-1002 • Amit Patel</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>Katra, Mandla</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-action btn-view" title="View Profile"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Document Viewer Modal -->
+    <div class="modal" id="docModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Review Documents</h3>
+                <i class="fas fa-times close-modal" onclick="closeDocs()"></i>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-mute); margin-bottom: 15px;">Shop Photo / Aadhaar Card submitted by Raju Digital Point.</p>
+            <div class="doc-preview">
+                <i class="fas fa-image" style="font-size: 3rem;"></i>
+                <div style="margin-left: 10px;">ID_Proof.jpg</div>
+            </div>
+            <button style="width: 100%; padding: 12px; background: var(--admin-theme); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;" onclick="closeDocs()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function viewDocs() {
+            document.getElementById('docModal').style.display = 'flex';
+        }
+        function closeDocs() {
+            document.getElementById('docModal').style.display = 'none';
+        }
+        
+        function approvePartner(rowId, statusId, actionsId) {
+            if(confirm("Are you sure you want to approve this partner? They will go live immediately.")) {
+                const statusBadge = document.getElementById(statusId);
+                const actionBox = document.getElementById(actionsId);
+                
+                statusBadge.className = 'status-badge status-active';
+                statusBadge.innerText = 'Active';
+                
+                // Keep only the view button after approval
+                actionBox.innerHTML = '<button class="btn-action btn-view" title="View Profile"><i class="fas fa-eye"></i></button>';
+                
+                // Add green tint to logo
+                document.querySelector(`#${rowId} .provider-logo`).style.background = '#dcfce7';
+                document.querySelector(`#${rowId} .provider-logo`).style.color = '#166534';
+            }
+        }
+    </script>
+</body>
+  </html>
+
