@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Financial Engine | Admin HQ</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg: #f1f5f9; --surface: #ffffff; --text-dark: #0f172a; --text-mute: #64748b;
+            --admin-theme: #d97706; /* Blueprint Orange */
+            --admin-sidebar: #1e293b; --sidebar-text: #cbd5e1;
+            --border: #e2e8f0; --success: #10b981; --danger: #ef4444; --info: #3b82f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text-dark); display: flex; min-height: 100vh; }
+
+        /* Sidebar HQ */
+        .sidebar { background: var(--admin-sidebar); width: 260px; display: flex; flex-direction: column; position: fixed; height: 100vh; left: 0; top: 0; z-index: 100; }
+        .sidebar-brand { padding: 25px 20px; font-size: 1.2rem; font-weight: 800; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; }
+        .nav-links { padding: 20px 0; flex: 1; }
+        .nav-item { padding: 15px 25px; color: var(--sidebar-text); text-decoration: none; display: flex; align-items: center; gap: 15px; font-weight: 500; transition: 0.2s; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.05); color: var(--admin-theme); border-left: 4px solid var(--admin-theme); }
+        .nav-item i { font-size: 1.2rem; width: 20px; }
+
+        /* Main Workspace */
+        .main-content { flex: 1; margin-left: 260px; padding: 30px; display: flex; flex-direction: column; }
+        
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .top-header h1 { font-size: 1.5rem; font-weight: 800; }
+        .date-filter { background: var(--surface); border: 1px solid var(--border); padding: 8px 15px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+
+        /* Finance Master Cards */
+        .finance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+        
+        .finance-card {
+            background: var(--surface); padding: 25px; border-radius: 16px;
+            border: 1px solid var(--border); position: relative; overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+        }
+        .finance-card.master { background: linear-gradient(135deg, var(--admin-sidebar), #0f172a); color: white; border: none; }
+        .finance-card.master h4 { color: #94a3b8; }
+        .finance-card.master .icon-bg { color: rgba(255,255,255,0.05); }
+
+        .finance-card h4 { font-size: 0.85rem; color: var(--text-mute); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; font-weight: 700; }
+        .finance-card h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 5px; }
+        .trend { font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .trend.up { color: var(--success); }
+        .trend.down { color: var(--danger); }
+        .icon-bg { position: absolute; right: -10px; bottom: -10px; font-size: 5rem; color: #f8fafc; opacity: 0.5; z-index: 0; }
+        .card-content { position: relative; z-index: 1; }
+
+        /* Ledger & Payouts Section */
+        .ledger-section { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        
+        .data-panel { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .panel-header h3 { font-size: 1.1rem; font-weight: 800; }
+        .btn-sm { padding: 6px 12px; background: #f1f5f9; color: var(--text-dark); border: none; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+
+        /* Payout List */
+        .payout-list { display: flex; flex-direction: column; gap: 15px; }
+        .payout-item { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
+        .payout-item:last-child { border-bottom: none; padding-bottom: 0; }
+        
+        .partner-data { display: flex; align-items: center; gap: 12px; }
+        .p-icon { width: 40px; height: 40px; border-radius: 10px; background: #ecfdf5; color: var(--success); display: flex; justify-content: center; align-items: center; font-size: 1.2rem; }
+        .p-info h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+        .p-info p { font-size: 0.75rem; color: var(--text-mute); font-family: monospace; }
+        
+        .p-amount { text-align: right; }
+        .p-amount h4 { font-size: 1.1rem; font-weight: 800; color: var(--text-dark); }
+        .btn-pay { margin-top: 5px; background: var(--admin-theme); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer; }
+
+        /* Transactions Table */
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { color: var(--text-mute); font-size: 0.8rem; font-weight: 700; padding-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        td { padding: 15px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; font-weight: 500; }
+        .comm-badge { background: #fef3c7; color: #d97706; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
+
+        @media (max-width: 1024px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; padding: 15px; }
+            .finance-grid { grid-template-columns: 1fr; }
+            .ledger-section { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-brand"><i class="fas fa-fingerprint" style="color: var(--admin-theme);"></i> Mandla HQ</div>
+        <div class="nav-links">
+            <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="orders.html" class="nav-item"><i class="fas fa-list-alt"></i> Total Orders</a>
+            <a href="providers.html" class="nav-item"><i class="fas fa-store"></i> Providers</a>
+            <a href="#" class="nav-item"><i class="fas fa-users"></i> Customers</a>
+            <a href="earnings.html" class="nav-item active"><i class="fas fa-chart-line"></i> Earnings</a>
+            <a href="#" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-header">
+            <h1>Financial Ledger</h1>
+            <div class="date-filter"><i class="fas fa-calendar-alt"></i> This Month <i class="fas fa-chevron-down" style="font-size: 0.7rem; margin-left: 5px;"></i></div>
+        </div>
+
+        <div class="finance-grid">
+            <div class="finance-card master">
+                <i class="fas fa-rupee-sign icon-bg"></i>
+                <div class="card-content">
+                    <h4>Gross Platform Volume (GPV)</h4>
+                    <h2>₹2,84,500</h2>
+                    <div class="trend up"><i class="fas fa-arrow-up"></i> 14% vs Last Month</div>
+                </div>
+            </div>
+            
+            <div class="finance-card">
+                <i class="fas fa-percent icon-bg" style="color: #fef3c7;"></i>
+                <div class="card-content">
+                    <h4>Platform Commission (10%)</h4>
+                    <h2 style="color: var(--admin-theme);">₹28,450</h2>
+                    <div class="trend up"><i class="fas fa-arrow-up"></i> Net Revenue</div>
+                </div>
+            </div>
+
+            <div class="finance-card">
+                <i class="fas fa-university icon-bg" style="color: #ecfdf5;"></i>
+                <div class="card-content">
+                    <h4>Pending Partner Payouts</h4>
+                    <h2 style="color: var(--text-dark);">₹42,100</h2>
+                    <div class="trend down" style="color: var(--text-mute);"><i class="fas fa-clock"></i> To be settled this Monday</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ledger-section">
+            
+            <div class="data-panel">
+                <div class="panel-header">
+                    <h3>Recent Transactions</h3>
+                    <button class="btn-sm"><i class="fas fa-download"></i> Export CSV</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>TXN ID</th>
+                            <th>Service</th>
+                            <th>Total Amt</th>
+                            <th>Platform Fee</th>
+                            <th>Partner Cut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-family: monospace; color: var(--text-mute);">#TXN-9981</td>
+                            <td>Startup Registration</td>
+                            <td>₹2,500</td>
+                            <td><span class="comm-badge">+₹250</span></td>
+                            <td style="color: var(--success); font-weight: 700;">₹2,250</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: monospace; color: var(--text-mute);">#TXN-9980</td>
+                            <td>PAN Card Apply</td>
+                            <td>₹150</td>
+                            <td><span class="comm-badge">+₹15</span></td>
+                            <td style="color: var(--success); font-weight: 700;">₹135</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: monospace; color: var(--text-mute);">#TXN-9979</td>
+                            <td>Legal Consulting</td>
+                            <td>₹500</td>
+                            <td><span class="comm-badge">+₹50</span></td>
+                            <td style="color: var(--success); font-weight: 700;">₹450</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="data-panel">
+                <div class="panel-header">
+                    <h3>Withdrawal Requests</h3>
+                </div>
+                <div class="payout-list">
+                    
+                    <div class="payout-item" id="payout1">
+                        <div class="partner-data">
+                            <div class="p-icon"><i class="fas fa-store"></i></div>
+                            <div class="p-info">
+                                <h4>MP Online Center</h4>
+                                <p>Bank: HDFC ****1124</p>
+                            </div>
+                        </div>
+                        <div class="p-amount">
+                            <h4>₹4,250</h4>
+                            <button class="btn-pay" onclick="clearPayout('payout1')">Release Funds</button>
+                        </div>
+                    </div>
+
+                    <div class="payout-item" id="payout2">
+                        <div class="partner-data">
+                            <div class="p-icon"><i class="fas fa-laptop-house"></i></div>
+                            <div class="p-info">
+                                <h4>CSC Digital Seva</h4>
+                                <p>Bank: SBI ****9980</p>
+                            </div>
+                        </div>
+                        <div class="p-amount">
+                            <h4>₹2,100</h4>
+                            <button class="btn-pay" onclick="clearPayout('payout2')">Release Funds</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function clearPayout(elementId) {
+            const btn = document.querySelector(`#${elementId} .btn-pay`);
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.style.opacity = '0.8';
+            
+            setTimeout(() => {
+                alert("Bank API triggered. Funds transferred to Partner successfully!");
+                document.getElementById(elementId).innerHTML = `
+                    <div style="width: 100%; text-align: center; color: var(--success); font-weight: 700; padding: 10px;">
+                        <i class="fas fa-check-circle"></i> Payout Cleared
+                    </div>
+                `;
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
+
