@@ -8,193 +8,173 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
     <style>
-        :root {
-            --bg: #f4f7f6; 
-            --surface: #ffffff; 
-            --text-dark: #1f2937; 
-            --text-mute: #6b7280;
-            --brand-dark: #064e3b; /* Dark Green Sidebar */
-            --brand-primary: #10b981; /* Emerald Green */
-            --brand-light: #ecfdf5;
-            --border: #e5e7eb;
-        }
-
+        :root { --bg: #f8fafc; --surface: #ffffff; --text-dark: #0f172a; --text-mute: #64748b; --brand-partner: #047857; --border: #e2e8f0; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text-dark); display: flex; min-height: 100vh; overflow-x: hidden; }
+        body { background: var(--bg); color: var(--text-dark); padding-bottom: 80px; }
 
-        /* Premium Sidebar */
-        .sidebar {
-            background: var(--brand-dark); color: white; width: 260px;
-            display: flex; flex-direction: column; position: fixed;
-            height: 100vh; left: 0; top: 0; z-index: 100;
-        }
-        .sidebar-brand {
-            padding: 25px 20px; font-size: 1.2rem; font-weight: 800;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;
-        }
-        .sidebar-brand i { color: var(--brand-primary); }
-        
-        .nav-links { padding: 20px 0; flex: 1; }
-        .nav-item {
-            padding: 15px 25px; color: #a7f3d0; text-decoration: none;
-            display: flex; align-items: center; gap: 15px; font-weight: 500; transition: 0.2s;
-        }
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255,255,255,0.05); color: white;
-            border-left: 4px solid var(--brand-primary);
-        }
-        .nav-item i { font-size: 1.2rem; width: 20px; }
-        
-        .partner-profile {
-            padding: 20px; border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.2);
-        }
-        .p-avatar { width: 40px; height: 40px; border-radius: 8px; background: var(--brand-primary); display: flex; justify-content: center; align-items: center; font-weight: 700; }
+        .header { background: var(--brand-partner); color: white; padding: 20px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(4, 120, 87, 0.2); }
+        .header h1 { font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .live-dot { width: 10px; height: 10px; background: #34d399; border-radius: 50%; box-shadow: 0 0 10px #34d399; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); } }
 
-        /* Main Dashboard Content */
-        .main-content { flex: 1; margin-left: 260px; padding: 30px; display: flex; flex-direction: column; }
-        
-        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .top-header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
-        .status-toggle {
-            background: var(--brand-light); color: var(--brand-primary);
-            padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 0.9rem;
-            display: flex; align-items: center; gap: 8px; border: 1px solid #a7f3d0; cursor: pointer;
-        }
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .stats-banner { display: flex; justify-content: space-between; background: var(--surface); padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .stat-box { text-align: center; }
+        .stat-box h4 { font-size: 0.75rem; color: var(--text-mute); margin-bottom: 5px; }
+        .stat-box h2 { font-size: 1.4rem; font-weight: 800; color: var(--brand-partner); }
 
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
-        .stat-card {
-            background: var(--surface); padding: 20px; border-radius: 16px;
-            border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
-            transition: 0.3s;
-        }
-        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); border-color: var(--brand-primary); }
-        .stat-card h4 { font-size: 0.8rem; color: var(--text-mute); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.5px; }
-        .stat-card h2 { font-size: 2rem; font-weight: 800; color: var(--text-dark); }
-        .stat-card.highlight { background: var(--brand-primary); border-color: var(--brand-primary); color: white; }
-        .stat-card.highlight h4 { color: rgba(255,255,255,0.8); }
-        .stat-card.highlight h2 { color: white; }
+        .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
 
-        /* Active Orders Section */
-        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-        .panel { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
-        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .panel-header h3 { font-size: 1.2rem; font-weight: 800; }
-        
-        .order-list { display: flex; flex-direction: column; gap: 15px; }
-        .order-item { border: 1px solid var(--border); border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-        .order-item:hover { border-color: var(--brand-primary); background: #f8fafc; }
-        
-        .order-info h4 { font-size: 1rem; font-weight: 700; margin-bottom: 5px; color: var(--text-dark); }
-        .order-info p { font-size: 0.8rem; color: var(--text-mute); }
-        .order-meta { text-align: right; }
-        .order-price { font-size: 1.1rem; font-weight: 800; color: var(--brand-primary); margin-bottom: 5px; }
-        .btn-sm { background: var(--brand-dark); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+        .order-card { background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; overflow: hidden; border-left: 4px solid #f59e0b; }
+        .order-card.accepted { border-left-color: var(--brand-partner); }
+        .o-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px dashed var(--border); padding-bottom: 10px; }
+        .o-id { font-size: 0.8rem; font-weight: 700; color: var(--text-mute); }
+        .o-service { font-size: 1.1rem; font-weight: 800; color: var(--text-dark); margin-top: 5px; }
+        .o-amount { font-size: 1.2rem; font-weight: 800; color: var(--brand-partner); }
 
-        /* Mobile Adjustments */
-        @media (max-width: 1024px) {
-            .sidebar { display: none; }
-            .main-content { margin-left: 0; padding: 15px; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .content-grid { grid-template-columns: 1fr; }
-        }
+        .o-details { font-size: 0.9rem; color: var(--text-dark); margin-bottom: 15px; line-height: 1.6; }
+        .o-details i { color: var(--text-mute); width: 20px; }
+
+        .btn-group { display: flex; gap: 10px; }
+        .btn-accept { flex: 1; background: var(--brand-partner); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-accept:hover { background: #065f46; }
+        .btn-accepted { flex: 1; background: #f1f5f9; color: var(--brand-partner); border: 1px solid var(--brand-partner); padding: 12px; border-radius: 8px; font-weight: 700; font-size: 1rem; text-align: center; pointer-events: none; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 0; z-index: 100; }
+        .nav-item { color: var(--text-mute); text-decoration: none; display: flex; flex-direction: column; align-items: center; font-size: 0.75rem; font-weight: 600; gap: 5px; }
+        .nav-item.active { color: var(--brand-partner); }
+        .nav-item i { font-size: 1.3rem; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-brand"><i class="fas fa-fingerprint"></i> Partner Portal</div>
-        <div class="nav-links">
-            <a href="#" class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</a>
-            <a href="#" class="nav-item"><i class="fas fa-list-alt"></i> New Requests</a>
-            <a href="#" class="nav-item"><i class="fas fa-check-circle"></i> Completed</a>
-            <a href="#" class="nav-item"><i class="fas fa-wallet"></i> Earnings</a>
-            <a href="#" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
-        </div>
-        <div class="partner-profile">
-            <div class="p-avatar"><i class="fas fa-store"></i></div>
-            <div>
-                <div style="font-weight: 700; font-size: 0.9rem;">MP Online Center</div>
-                <div style="font-size: 0.75rem; color: #a7f3d0;">PRT-1002</div>
+    <header class="header">
+        <h1><div class="live-dot"></div> Partner Portal (MP Online)</h1>
+    </header>
+
+    <div class="container">
+        <div class="stats-banner">
+            <div class="stat-box">
+                <h4>Today's Earning</h4>
+                <h2>₹<span id="partnerEarning">0</span></h2>
             </div>
+            <div class="stat-box">
+                <h4>Jobs Done</h4>
+                <h2 id="jobsDone">0</h2>
+            </div>
+        </div>
+
+        <h3 class="section-title"><i class="fas fa-bell"></i> Available Requests</h3>
+        
+        <div id="partnerOrderList">
+            <p style="text-align: center; color: #64748b; margin-top: 20px;">
+                <i class="fas fa-spinner fa-spin"></i> Searching for nearby orders...
+            </p>
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="top-header">
-            <h1>Workspace</h1>
-            <div class="status-toggle"><i class="fas fa-circle"></i> Accepting Orders</div>
-        </div>
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active"><i class="fas fa-clipboard-list"></i> Tasks</a>
+        <a href="#" class="nav-item"><i class="fas fa-wallet"></i> Wallet</a>
+        <a href="../index.html" class="nav-item"><i class="fas fa-home"></i> Home</a>
+    </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h4>Today's Jobs</h4>
-                <h2>12</h2>
-            </div>
-            <div class="stat-card">
-                <h4>Pending</h4>
-                <h2 style="color: #f59e0b;">3</h2>
-            </div>
-            <div class="stat-card">
-                <h4>Completed</h4>
-                <h2>284</h2>
-            </div>
-            <div class="stat-card highlight">
-                <h4>Total Earnings</h4>
-                <h2>₹2,450</h2>
-            </div>
-        </div>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBmdEmqUIiP0hr_Ixfu6s83KBJfeTHgFkw",
+            authDomain: "digital-sahayata-f3ede.firebaseapp.com",
+            projectId: "digital-sahayata-f3ede",
+            storageBucket: "digital-sahayata-f3ede.firebasestorage.app",
+            messagingSenderId: "532380574288",
+            appId: "1:532380574288:web:f306370320e448f09b6755"
+        };
 
-        <div class="content-grid">
-            <div class="panel">
-                <div class="panel-header">
-                    <h3>Current Orders</h3>
-                    <a href="#" style="color: var(--brand-primary); font-weight: 600; text-decoration: none; font-size: 0.9rem;">View All</a>
-                </div>
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        
+        // Dummy ID for currently logged in partner
+        const MY_PARTNER_ID = "PRT_MP_001"; 
+
+        // LISTEN FOR NEW & ACCEPTED ORDERS
+        db.collection("3_ORDERS").orderBy("created_at", "desc").onSnapshot((snapshot) => {
+            const orderListDiv = document.getElementById("partnerOrderList");
+            let htmlContent = "";
+            let jobsCount = 0;
+            let totalEarnings = 0;
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
                 
-                <div class="order-list">
-                    <div class="order-item">
-                        <div class="order-info">
-                            <h4>PAN Card Apply</h4>
-                            <p>Order ID: #DSN847291 • Katra, Mandla</p>
-                        </div>
-                        <div class="order-meta">
-                            <div class="order-price">₹150</div>
-                            <button class="btn-sm">Process Job</button>
-                        </div>
-                    </div>
+                // Show only NEW orders OR orders accepted by THIS partner
+                if (data.order_status === "NEW_REQUEST" || (data.order_status === "PROCESSING" && data.assigned_partner_id === MY_PARTNER_ID)) {
+                    
+                    let serviceName = data.service_requested.toUpperCase().replace("_", " ");
+                    let partnerCut = Math.floor(data.total_amount_inr * 0.90); // Partner gets 90%, Platform keeps 10%
 
-                    <div class="order-item">
-                        <div class="order-info">
-                            <h4>Aadhaar Update</h4>
-                            <p>Order ID: #DSN847292 • Bamhani Banjar</p>
-                        </div>
-                        <div class="order-meta">
-                            <div class="order-price">₹100</div>
-                            <button class="btn-sm" style="background: #f59e0b;">Working...</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    let isAcceptedByMe = data.order_status === "PROCESSING";
+                    
+                    if (isAcceptedByMe) {
+                        jobsCount++;
+                        totalEarnings += partnerCut;
+                    }
 
-            <div class="panel">
-                <div class="panel-header">
-                    <h3>System Notices</h3>
-                </div>
-                <div style="padding: 15px; background: var(--brand-light); border-left: 4px solid var(--brand-primary); border-radius: 8px; margin-bottom: 15px;">
-                    <h4 style="font-size: 0.9rem; color: var(--brand-dark); margin-bottom: 5px;">Payout Processed</h4>
-                    <p style="font-size: 0.8rem; color: var(--brand-dark);">Your previous week's settlement of ₹1,850 has been credited to your HDFC bank.</p>
-                </div>
-                <div style="padding: 15px; background: #eff6ff; border-left: 4px solid #2563eb; border-radius: 8px;">
-                    <h4 style="font-size: 0.9rem; color: #1e3a8a; margin-bottom: 5px;">New Service Added</h4>
-                    <p style="font-size: 0.8rem; color: #1e3a8a;">You can now accept 'Startup Registration' jobs. Update your profile to opt-in.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+                    let btnHtml = isAcceptedByMe 
+                        ? `<div class="btn-accepted"><i class="fas fa-check-circle"></i> Working on it</div>`
+                        : `<button class="btn-accept" onclick="acceptOrder('${doc.id}')"><i class="fas fa-hand-pointer"></i> Accept Job (Earn ₹${partnerCut})</button>`;
 
+                    htmlContent += `
+                        <div class="order-card ${isAcceptedByMe ? 'accepted' : ''}">
+                            <div class="o-header">
+                                <div>
+                                    <div class="o-id">ID: ${data.order_id}</div>
+                                    <div class="o-service">${serviceName}</div>
+                                </div>
+                                <div class="o-amount">₹${data.total_amount_inr}</div>
+                            </div>
+                            <div class="o-details">
+                                <div><i class="fas fa-user"></i> ${data.customer_name}</div>
+                                <div><i class="fas fa-phone-alt"></i> ${isAcceptedByMe ? data.contact_phone : '+91 ******' + data.contact_phone.slice(-4)}</div>
+                            </div>
+                            <div class="btn-group">
+                                ${btnHtml}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            if (htmlContent === "") {
+                orderListDiv.innerHTML = `<p style="text-align: center; color: #64748b; padding: 20px;">No new orders right now. Grab a chai! ☕</p>`;
+            } else {
+                orderListDiv.innerHTML = htmlContent;
+            }
+
+            document.getElementById("jobsDone").innerText = jobsCount;
+            document.getElementById("partnerEarning").innerText = totalEarnings;
+        });
+
+        // ENGINE: ACCEPT ORDER FUNCTION (Updates Firestore)
+        function acceptOrder(docId) {
+            db.collection("3_ORDERS").doc(docId).update({
+                order_status: "PROCESSING",
+                assigned_partner_id: MY_PARTNER_ID,
+                updated_at: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                // UI automatically updates because of .onSnapshot listener!
+                console.log("Order Accepted Successfully!");
+            })
+            .catch((error) => {
+                console.error("Error accepting order: ", error);
+                alert("Database Error! Kisi aur ne accept kar liya hoga.");
+            });
+        }
+    </script>
 </body>
 </html>
