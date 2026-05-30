@@ -3,84 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Partner Portal | Digital Sahayata</title>
+    <title>Partner App | Digital Sahayata</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
     <style>
-        :root { --bg: #f8fafc; --surface: #ffffff; --text-dark: #0f172a; --text-mute: #64748b; --brand-partner: #047857; --border: #e2e8f0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text-dark); padding-bottom: 80px; }
+        :root { 
+            --bg: #f4f7f6; --surface: #ffffff; --text-dark: #111827; --text-mute: #6b7280; 
+            --primary: #000000; --accent: #22c55e; --border: #e5e7eb; 
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text-dark); padding-bottom: 100px; overflow-x: hidden; }
 
-        .header { background: var(--brand-partner); color: white; padding: 20px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(4, 120, 87, 0.2); }
-        .header h1 { font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .live-dot { width: 10px; height: 10px; background: #34d399; border-radius: 50%; box-shadow: 0 0 10px #34d399; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); } }
+        /* Premium Header */
+        .top-bar {
+            background: var(--surface); padding: 20px 20px 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+        .profile-sec { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 45px; height: 45px; background: #f3f4f6; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; border: 2px solid var(--border); }
+        .greeting p { font-size: 0.75rem; color: var(--text-mute); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .greeting h2 { font-size: 1.1rem; font-weight: 800; }
 
-        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
-        .stats-banner { display: flex; justify-content: space-between; background: var(--surface); padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .stat-box { text-align: center; }
-        .stat-box h4 { font-size: 0.75rem; color: var(--text-mute); margin-bottom: 5px; }
-        .stat-box h2 { font-size: 1.4rem; font-weight: 800; color: var(--brand-partner); }
+        /* Status Toggle */
+        .status-toggle {
+            background: #dcfce7; color: #166534; padding: 8px 16px; border-radius: 30px;
+            font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px;
+            border: 1px solid #bbf7d0; box-shadow: 0 2px 10px rgba(34, 197, 94, 0.2);
+        }
+        .status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: blink 1.5s infinite; }
+        @keyframes blink { 50% { opacity: 0.4; } }
 
-        .section-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        /* Earning Card (Uber Style) */
+        .dashboard-wrapper { padding: 20px; }
+        .earning-card {
+            background: var(--primary); color: white; border-radius: 24px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); position: relative; overflow: hidden;
+            margin-bottom: 25px;
+        }
+        .earning-card::after { content: ''; position: absolute; top: -50%; right: -20%; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%; }
+        .e-title { font-size: 0.9rem; color: #9ca3af; font-weight: 500; margin-bottom: 5px; }
+        .e-amount { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 15px; }
+        .e-stats { display: flex; gap: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
+        .e-stat-item div:first-child { font-size: 0.75rem; color: #9ca3af; }
+        .e-stat-item div:last-child { font-size: 1.1rem; font-weight: 700; }
 
-        .order-card { background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: relative; overflow: hidden; border-left: 4px solid #f59e0b; }
-        .order-card.accepted { border-left-color: var(--brand-partner); }
-        .o-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px dashed var(--border); padding-bottom: 10px; }
-        .o-id { font-size: 0.8rem; font-weight: 700; color: var(--text-mute); }
-        .o-service { font-size: 1.1rem; font-weight: 800; color: var(--text-dark); margin-top: 5px; }
-        .o-amount { font-size: 1.2rem; font-weight: 800; color: var(--brand-partner); }
+        /* Section Title */
+        .sec-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 15px; color: var(--text-dark); display: flex; align-items: center; justify-content: space-between; }
+        .pulse-badge { background: #fee2e2; color: #dc2626; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; border: 1px solid #fecaca; }
 
-        .o-details { font-size: 0.9rem; color: var(--text-dark); margin-bottom: 15px; line-height: 1.6; }
-        .o-details i { color: var(--text-mute); width: 20px; }
+        /* Premium Order Card */
+        .order-card {
+            background: var(--surface); border-radius: 20px; padding: 20px; margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border);
+            transition: 0.3s; position: relative;
+        }
+        .order-card::before {
+            content: ''; position: absolute; left: 0; top: 20px; bottom: 20px; width: 4px;
+            background: #f59e0b; border-radius: 0 4px 4px 0;
+        }
+        .order-card.accepted::before { background: var(--accent); }
+        
+        .o-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .o-service { font-size: 1.2rem; font-weight: 800; color: var(--text-dark); line-height: 1.2; }
+        .o-id { font-size: 0.75rem; color: var(--text-mute); font-weight: 600; margin-top: 4px; }
+        .o-price { font-size: 1.3rem; font-weight: 800; color: var(--primary); background: #f3f4f6; padding: 6px 12px; border-radius: 12px; }
 
-        .btn-group { display: flex; gap: 10px; }
-        .btn-accept { flex: 1; background: var(--brand-partner); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
-        .btn-accept:hover { background: #065f46; }
-        .btn-accepted { flex: 1; background: #f1f5f9; color: var(--brand-partner); border: 1px solid var(--brand-partner); padding: 12px; border-radius: 8px; font-weight: 700; font-size: 1rem; text-align: center; pointer-events: none; }
+        .o-customer {
+            display: flex; align-items: center; gap: 12px; background: #f9fafb; padding: 12px;
+            border-radius: 12px; margin-bottom: 15px; border: 1px solid #f3f4f6;
+        }
+        .c-icon { width: 35px; height: 35px; background: #e5e7eb; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--text-mute); }
+        .c-info h4 { font-size: 0.9rem; font-weight: 700; }
+        .c-info p { font-size: 0.8rem; color: var(--text-mute); font-weight: 500; margin-top: 2px; }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 15px 0; z-index: 100; }
-        .nav-item { color: var(--text-mute); text-decoration: none; display: flex; flex-direction: column; align-items: center; font-size: 0.75rem; font-weight: 600; gap: 5px; }
-        .nav-item.active { color: var(--brand-partner); }
-        .nav-item i { font-size: 1.3rem; }
+        /* Action Buttons */
+        .btn-swipe {
+            width: 100%; background: var(--primary); color: white; border: none; padding: 16px;
+            border-radius: 14px; font-size: 1.05rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15); display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s;
+        }
+        .btn-swipe:active { transform: scale(0.98); }
+        .btn-accepted {
+            width: 100%; background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;
+            padding: 16px; border-radius: 14px; font-size: 1.05rem; font-weight: 700; text-align: center;
+        }
+
+        /* Floating Bottom Nav */
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-between; width: 90%; max-width: 400px;
+            padding: 15px 25px; border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.4); z-index: 100;
+        }
+        .nav-item { color: #9ca3af; text-decoration: none; display: flex; flex-direction: column; align-items: center; font-size: 0.7rem; font-weight: 700; gap: 6px; transition: 0.2s; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { font-size: 1.4rem; }
     </style>
 </head>
 <body>
 
-    <header class="header">
-        <h1><div class="live-dot"></div> Partner Portal (MP Online)</h1>
-    </header>
-
-    <div class="container">
-        <div class="stats-banner">
-            <div class="stat-box">
-                <h4>Today's Earning</h4>
-                <h2>₹<span id="partnerEarning">0</span></h2>
+    <div class="top-bar">
+        <div class="profile-sec">
+            <div class="avatar"><i class="fas fa-store"></i></div>
+            <div class="greeting">
+                <p>MP Online Center</p>
+                <h2>Lucky Partner</h2>
             </div>
-            <div class="stat-box">
-                <h4>Jobs Done</h4>
-                <h2 id="jobsDone">0</h2>
+        </div>
+        <div class="status-toggle">
+            <div class="status-dot"></div> Online
+        </div>
+    </div>
+
+    <div class="dashboard-wrapper">
+        <div class="earning-card">
+            <div class="e-title">Today's Earnings</div>
+            <div class="e-amount">₹<span id="partnerEarning">0</span></div>
+            <div class="e-stats">
+                <div class="e-stat-item">
+                    <div>Completed Jobs</div>
+                    <div id="jobsDone">0</div>
+                </div>
+                <div class="e-stat-item">
+                    <div>Online Hours</div>
+                    <div>4.5h</div>
+                </div>
             </div>
         </div>
 
-        <h3 class="section-title"><i class="fas fa-bell"></i> Available Requests</h3>
+        <div class="sec-title">
+            <span>Live Requests</span>
+            <span class="pulse-badge">Looking for jobs...</span>
+        </div>
         
         <div id="partnerOrderList">
-            <p style="text-align: center; color: #64748b; margin-top: 20px;">
-                <i class="fas fa-spinner fa-spin"></i> Searching for nearby orders...
-            </p>
+            <div style="text-align: center; padding: 40px 20px; color: var(--text-mute);">
+                <i class="fas fa-radar fa-spin" style="font-size: 2.5rem; color: var(--border); margin-bottom: 15px;"></i>
+                <p style="font-size: 0.9rem; font-weight: 500;">Scanning your area for new jobs...</p>
+            </div>
         </div>
     </div>
 
     <div class="bottom-nav">
-        <a href="#" class="nav-item active"><i class="fas fa-clipboard-list"></i> Tasks</a>
-        <a href="#" class="nav-item"><i class="fas fa-wallet"></i> Wallet</a>
-        <a href="../index.html" class="nav-item"><i class="fas fa-home"></i> Home</a>
+        <a href="#" class="nav-item active"><i class="fas fa-layer-group"></i></a>
+        <a href="#" class="nav-item"><i class="fas fa-wallet"></i></a>
+        <a href="#" class="nav-item"><i class="fas fa-history"></i></a>
+        <a href="../index.html" class="nav-item"><i class="fas fa-user-circle"></i></a>
     </div>
 
     <script>
@@ -97,11 +173,8 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.firestore();
-        
-        // Dummy ID for currently logged in partner
         const MY_PARTNER_ID = "PRT_MP_001"; 
 
-        // LISTEN FOR NEW & ACCEPTED ORDERS
         db.collection("3_ORDERS").orderBy("created_at", "desc").onSnapshot((snapshot) => {
             const orderListDiv = document.getElementById("partnerOrderList");
             let htmlContent = "";
@@ -111,12 +184,10 @@
             snapshot.forEach((doc) => {
                 const data = doc.data();
                 
-                // Show only NEW orders OR orders accepted by THIS partner
                 if (data.order_status === "NEW_REQUEST" || (data.order_status === "PROCESSING" && data.assigned_partner_id === MY_PARTNER_ID)) {
                     
                     let serviceName = data.service_requested.toUpperCase().replace("_", " ");
-                    let partnerCut = Math.floor(data.total_amount_inr * 0.90); // Partner gets 90%, Platform keeps 10%
-
+                    let partnerCut = Math.floor(data.total_amount_inr * 0.90); 
                     let isAcceptedByMe = data.order_status === "PROCESSING";
                     
                     if (isAcceptedByMe) {
@@ -125,32 +196,37 @@
                     }
 
                     let btnHtml = isAcceptedByMe 
-                        ? `<div class="btn-accepted"><i class="fas fa-check-circle"></i> Working on it</div>`
-                        : `<button class="btn-accept" onclick="acceptOrder('${doc.id}')"><i class="fas fa-hand-pointer"></i> Accept Job (Earn ₹${partnerCut})</button>`;
+                        ? `<div class="btn-accepted"><i class="fas fa-check-circle"></i> Processing Order</div>`
+                        : `<button class="btn-swipe" onclick="acceptOrder('${doc.id}')">Accept & Earn ₹${partnerCut}</button>`;
 
                     htmlContent += `
                         <div class="order-card ${isAcceptedByMe ? 'accepted' : ''}">
                             <div class="o-header">
                                 <div>
-                                    <div class="o-id">ID: ${data.order_id}</div>
                                     <div class="o-service">${serviceName}</div>
+                                    <div class="o-id">REQ #${data.order_id}</div>
                                 </div>
-                                <div class="o-amount">₹${data.total_amount_inr}</div>
+                                <div class="o-price">₹${data.total_amount_inr}</div>
                             </div>
-                            <div class="o-details">
-                                <div><i class="fas fa-user"></i> ${data.customer_name}</div>
-                                <div><i class="fas fa-phone-alt"></i> ${isAcceptedByMe ? data.contact_phone : '+91 ******' + data.contact_phone.slice(-4)}</div>
+                            <div class="o-customer">
+                                <div class="c-icon"><i class="fas ${isAcceptedByMe ? 'fa-user-check' : 'fa-user-lock'}"></i></div>
+                                <div class="c-info">
+                                    <h4>${data.customer_name}</h4>
+                                    <p>${isAcceptedByMe ? data.contact_phone : '+91 ******' + data.contact_phone.slice(-4)}</p>
+                                </div>
                             </div>
-                            <div class="btn-group">
-                                ${btnHtml}
-                            </div>
+                            ${btnHtml}
                         </div>
                     `;
                 }
             });
 
             if (htmlContent === "") {
-                orderListDiv.innerHTML = `<p style="text-align: center; color: #64748b; padding: 20px;">No new orders right now. Grab a chai! ☕</p>`;
+                orderListDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-mute); background: white; border-radius: 20px; border: 1px dashed var(--border);">
+                        <i class="fas fa-mug-hot" style="font-size: 2rem; color: #d1d5db; margin-bottom: 10px;"></i>
+                        <p style="font-size: 0.9rem; font-weight: 500;">No active requests in your area.<br>Take a break!</p>
+                    </div>`;
             } else {
                 orderListDiv.innerHTML = htmlContent;
             }
@@ -159,20 +235,15 @@
             document.getElementById("partnerEarning").innerText = totalEarnings;
         });
 
-        // ENGINE: ACCEPT ORDER FUNCTION (Updates Firestore)
         function acceptOrder(docId) {
             db.collection("3_ORDERS").doc(docId).update({
                 order_status: "PROCESSING",
                 assigned_partner_id: MY_PARTNER_ID,
                 updated_at: firebase.firestore.FieldValue.serverTimestamp()
             })
-            .then(() => {
-                // UI automatically updates because of .onSnapshot listener!
-                console.log("Order Accepted Successfully!");
-            })
             .catch((error) => {
                 console.error("Error accepting order: ", error);
-                alert("Database Error! Kisi aur ne accept kar liya hoga.");
+                alert("Order pehle hi kisi aur ne le liya hai!");
             });
         }
     </script>
